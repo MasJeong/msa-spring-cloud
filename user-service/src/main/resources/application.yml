@@ -1,5 +1,8 @@
 server:
-  port: 9001
+#  port: 9001
+  # 0은 랜덤 port로 실행하겠다는 의미
+  # PowerShell에서 mvn spring-boot:run 입력 시 랜덤 포트로 실행됨.
+  port: 0
 
 spring:
   application:
@@ -7,9 +10,14 @@ spring:
 
 eureka:
   client:
-    # true: EUREKA? ??? ???.
     register-with-eureka: true
-    # true: EUREKA ????? ?????? ??? ????? ??? ???? ???? ??
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka # eureka ????? ??
+      defaultZone: http://127.0.0.1:8761/eureka
+
+  # 0번포트(랜덤포트)를 사용하게되면 애플리케이션을 여러개 실행했어도 Eureka서버에 1개만 실행되는 것처럼 보인다.
+  # 이를 예방하기 위해 사용하는 옵션(instance-id)
+  instance:
+    instance-id: ${spring.application.name}:${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+    # Eureka Server로 설정된 시간(second)마다 heartbeat 전송 (디폴트 30초)
+    lease-renewal-interval-in-seconds: 10

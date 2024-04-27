@@ -6,6 +6,11 @@ spring:
     name: discoveryservice # microService name
 
 eureka:
+  server:
+    # 클라이언트로부터 하트비트가 계속 수신 되는지 점검 (디폴트 60초)
+    eviction-interval-timer-in-ms:
   client:
-    register-with-eureka: false # false: ??? ??? ???? ???? ??
+    # 레지스트리에 자신을 등록할지에 대한 여부 (디폴트 true)
+    register-with-eureka: false
+    # 레지스트리에 있는 정보를 가져올지에 대한 여부 (디폴트 true)
     fetch-registry: false
