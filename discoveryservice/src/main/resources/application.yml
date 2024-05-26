@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: discoveryservice # microService name
+    name: discoveryservice
 
 eureka:
   server:
