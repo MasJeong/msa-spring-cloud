@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FirstServiceApplication {
 
     public static void main(String[] args) {
-        // subtree test commit
         SpringApplication.run(FirstServiceApplication.class, args);
     }
 
