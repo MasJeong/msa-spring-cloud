@@ -10,7 +10,7 @@ spring:
         - id: first-service
           uri: http://localhost:8081/
           predicates:
-            - Path=/first-service/** # \uC5B4\uB5A0\uD55C \uC694\uCCAD \uC815\uBCF4\uB3C4 \uC704 uri\uB85C \uC774\uB3D9\uD55C\uB2E4.
+            - Path=/first-service/**
           filters:
             - AddRequestHeader=first-request, first-request-header2
             - AddResponseHeader=first-response, first-response-header2
