@@ -27,6 +27,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
      */
     @Override
     public GatewayFilter apply(Config config) {
+        // Custom Pre Filter
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
@@ -34,12 +35,13 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             log.info("Custom PRE Filter: request id -> {}", request.getId());
 
             /*
+            Custom Post Filter
             chain.filter(exchange): post 필터 적용하기 위해 chain에 추가한다.
             Mono.fromRunnable: (spring 5버전 이상) web flux 비동기 방식의 서버에서 단일값 전달할 때 Mono class를 사용한다.
              */
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 // TODO 사용자 로그인 기능을 추가할 예정임
-                log.info("Custom POST Filter: response id -> {}", response.getStatusCode());
+                log.info("Custom POST Filter: response code -> {}", response.getStatusCode());
             }));
         });
     }
