@@ -29,7 +29,12 @@ spring:
           filters:
 #            - AddRequestHeader=second-request, second-request-header2
 #            - AddResponseHeader=second-response, second-response-header2
-            - CustomFilter # CustomFilter 파일명
+            - name: CustomFilter  # CustomFilter 파일명
+            - name: LoggingFilter # LoggingFilter 파일명
+              args:
+                baseMessage: hi, there.
+                preLogger: true
+                postLogger: true
 
 eureka:
   client:
