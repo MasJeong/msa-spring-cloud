@@ -6,7 +6,7 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
-      # Global Filter 설정 - Global과 Custom Filter 둘 다 적용 가능함.
+      # Global Filter 설정 - Global과 Custom, Logging Filter 모두 적용 가능
       default-filters:
         - name: GlobalFilter # GlobalFilter 파일명
           args:              # GlobalFilter.Config 파라미터 세팅
@@ -15,7 +15,7 @@ spring:
             postLogger: true
       routes:
         - id: first-service
-          uri: http://localhost:8081/
+          uri: lb://MY-FIRST-SERVICE
           predicates:
             - Path=/first-service/**
           filters:
@@ -23,7 +23,7 @@ spring:
 #            - AddResponseHeader=first-response, first-response-header2
             - CustomFilter # CustomFilter 파일명
         - id: second-service
-          uri: http://localhost:8082/
+          uri: lb://MY-SECOND-SERVICE # lb란 load balancer
           predicates:
             - Path=/second-service/**
           filters:
@@ -38,7 +38,7 @@ spring:
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka # discoveryservice
