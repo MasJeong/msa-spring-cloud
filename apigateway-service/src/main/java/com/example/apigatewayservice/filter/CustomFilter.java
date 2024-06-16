@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * Custom Filter 구현
+ * Global Filter(전역 필터)와는 다르게 원하는 서비스에 filter를 설정하는 경우 사용한다.
  */
 @Component
 @Slf4j
@@ -43,8 +44,10 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
         });
     }
 
+    /**
+     * configuration 정보를 세팅한다.
+     */
     public static class Config {
-        //  configuration 정보를 세팅한다.
 
     }
 
