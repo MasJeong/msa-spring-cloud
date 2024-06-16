@@ -1,6 +1,7 @@
 package com.example.apigatewayservice.filter;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -54,14 +55,12 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
     /**
      * configuration 정보를 세팅한다.
      */
-    @Data
+    @Getter
+    @Setter
     public static class Config {
         private String baseMessage;
-
         private boolean preLogger;
-
         private boolean postLogger;
-
     }
 
 }
