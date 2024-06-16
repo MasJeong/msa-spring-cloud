@@ -6,6 +6,13 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
+      # Global Filter 설정 - Global과 Custom Filter 둘 다 적용 가능함.
+      default-filters:
+        - name: GlobalFilter # GlobalFilter 파일명
+          args:              # GlobalFilter.Config 파라미터 세팅
+            baseMessage: Spring Cloud Gateway Filter
+            preLogger: true
+            postLogger: true
       routes:
         - id: first-service
           uri: http://localhost:8081/
@@ -14,7 +21,7 @@ spring:
           filters:
 #            - AddRequestHeader=first-request, first-request-header2
 #            - AddResponseHeader=first-response, first-response-header2
-            - CustomFilter
+            - CustomFilter # CustomFilter 파일명
         - id: second-service
           uri: http://localhost:8082/
           predicates:
@@ -22,7 +29,7 @@ spring:
           filters:
 #            - AddRequestHeader=second-request, second-request-header2
 #            - AddResponseHeader=second-response, second-response-header2
-            - CustomFilter
+            - CustomFilter # CustomFilter 파일명
 
 eureka:
   client:
