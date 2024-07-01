@@ -39,7 +39,6 @@ build/
 
 ### Gradle ###
 .gradle
-build/
 
 ### Gradle Patch ###
 **/build/
