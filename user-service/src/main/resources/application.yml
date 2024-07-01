@@ -32,6 +32,7 @@ eureka:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     # Eureka Server로 heartbeat 전송하는 시간 (디폴트 30초)
     lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true
 
 greeting:
   message: Welcome to the Simple E-Commerce.
