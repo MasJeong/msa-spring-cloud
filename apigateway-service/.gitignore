@@ -33,12 +33,11 @@ build/
 ### VS Code ###
 .vscode/
 
-# Gradle
+### Gradle ###
+/.gradle/
+.gradle/
 .idea/**/gradle.xml
 .idea/**/libraries
-
-### Gradle ###
-.gradle/
 
 ### Gradle Patch ###
 **/build/
