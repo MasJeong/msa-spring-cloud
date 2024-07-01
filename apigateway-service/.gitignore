@@ -38,7 +38,7 @@ build/
 .idea/**/libraries
 
 ### Gradle ###
-.gradle
+.gradle/
 
 ### Gradle Patch ###
 **/build/
