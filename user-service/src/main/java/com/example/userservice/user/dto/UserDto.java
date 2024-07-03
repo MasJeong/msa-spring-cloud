@@ -3,6 +3,7 @@ package com.example.userservice.user.dto;
 import com.example.userservice.user.vo.ResponseOrder;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,7 +21,7 @@ public class UserDto {
 
     private String email;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     private String encryptedPwd;
 
