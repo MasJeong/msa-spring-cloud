@@ -3,6 +3,8 @@ package com.example.userservice.user.vo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -16,4 +18,6 @@ public class ResponseUser {
     private String name;
 
     private String email;
+
+    private List<ResponseOrder> orders;
 }
