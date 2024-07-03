@@ -15,9 +15,10 @@ spring:
     username: sa
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     generate-ddl: true
+    defer-datasource-initialization: true
 
 eureka:
   client:
