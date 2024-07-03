@@ -14,10 +14,17 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+        # user service
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
+        # catalog service
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/**
+        # first service
         - id: first-service
           uri: lb://MY-FIRST-SERVICE
           predicates:
@@ -26,6 +33,7 @@ spring:
 #            - AddRequestHeader=first-request, first-request-header2
 #            - AddResponseHeader=first-response, first-response-header2
             - CustomFilter # CustomFilter 파일명
+        # second service
         - id: second-service
           uri: lb://MY-SECOND-SERVICE
           predicates:
