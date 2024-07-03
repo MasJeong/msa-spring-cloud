@@ -1,0 +1,35 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: catalog-service
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    generate-ddl: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+
+  # 0\uBC88\uD3EC\uD2B8(\uB79C\uB364\uD3EC\uD2B8)\uB97C \uC0AC\uC6A9\uD558\uAC8C\uB418\uBA74 \uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC744 \uC5EC\uB7EC\uAC1C \uC2E4\uD589\uD588\uC5B4\uB3C4 Eureka\uC11C\uBC84\uC5D0 1\uAC1C\uB9CC \uC2E4\uD589\uB418\uB294 \uAC83\uCC98\uB7FC \uBCF4\uC778\uB2E4.
+  # \uC774\uB97C \uBC29\uC9C0\uD558\uAE30 \uC704\uD574 \uC0AC\uC6A9\uD558\uB294 \uC635\uC158(instance-id)
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    # Eureka Server\uB85C heartbeat \uC804\uC1A1\uD558\uB294 \uC2DC\uAC04 (\uB514\uD3F4\uD2B8 30\uCD08)
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true
