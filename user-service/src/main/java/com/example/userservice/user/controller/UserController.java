@@ -5,6 +5,7 @@ import com.example.userservice.user.dto.UserDto;
 import com.example.userservice.user.service.UserService;
 import com.example.userservice.user.vo.RequestUser;
 import com.example.userservice.user.vo.ResponseUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -18,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user-service/users")
+@RequestMapping("/user-service")
 public class UserController {
 
     private final UserService userService;
@@ -29,7 +30,7 @@ public class UserController {
      * 사용자 전체 목록 조회
      * @return 사용자 목록
      */
-    @GetMapping
+    @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
         List<UserEntity> userList = userService.getAllUsers();
@@ -45,7 +46,7 @@ public class UserController {
      * @param userId 사용자 아이디
      * @return 사용자 상세정보
      */
-    @GetMapping("{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
 
         UserDto userDto = userService.getUserByUserId(userId);
@@ -60,8 +61,8 @@ public class UserController {
      * @param requestUser 저장할 요청 정보
      * @return responseUser
      */
-    @PostMapping
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser requestUser) {
+    @PostMapping("/users")
+    public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestUser requestUser) {
 
         UserDto userDto = modelMapper.map(requestUser, UserDto.class);
 

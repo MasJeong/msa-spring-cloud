@@ -48,6 +48,7 @@ public class UserService {
 
         UserDto userDto = modelMapper.map(userEntity, UserDto.class);
 
+        // TODO 추후 feign client를 통한 주문 목록 가져오기.
         List<ResponseOrder> orders = new ArrayList<>();
         userDto.setOrders(orders);
 
