@@ -32,14 +32,14 @@ spring:
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie # 헤더 값 초기화
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment} # 쉼표 기준 전자 url을 후자로 변경함
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users
             - Method=POST
           filters:
-            - RemoveRequestHeader=Cookie # 헤더 값 초기화
+            - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
@@ -47,7 +47,7 @@ spring:
             - Path=/user-service/users
             - Method=GET
           filters:
-            - RemoveRequestHeader=Cookie # 헤더 값 초기화
+            - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         # order service
         - id: order-service
