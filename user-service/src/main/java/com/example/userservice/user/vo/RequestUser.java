@@ -2,17 +2,14 @@ package com.example.userservice.user.vo;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestUser {
-
-    @NotNull(message = "User ID cannot be null")
-    private String userId;
 
     @NotNull(message = "Name cannot be null")
     @Size(min = 2, message = "Name not be less than two characters")

@@ -2,13 +2,13 @@ package com.example.userservice.user.vo;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestLogin {
 
     @NotNull(message = "Email cannot be null")
