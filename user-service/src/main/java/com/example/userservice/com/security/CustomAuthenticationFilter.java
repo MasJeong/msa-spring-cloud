@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 
-@RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UserService userService;
@@ -33,7 +31,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final Environment env;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager,
-                                   UserService userService, Environment env) {
+                                      UserService userService,
+                                      Environment env) {
         super(authenticationManager);
         this.userService = userService;
         this.env = env;
@@ -70,7 +69,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
+    protected void successfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain,
                                             Authentication auth) {
 
         String userName = ((User) auth.getPrincipal()).getUsername();
@@ -95,7 +96,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .signWith(secretKey)
                 .compact();
 
-        res.addHeader("token", token);
-        res.addHeader("userId", userDetails.getUserId());
+        response.addHeader("token", token);
+        response.addHeader("userId", userDetails.getUserId());
     }
 }
