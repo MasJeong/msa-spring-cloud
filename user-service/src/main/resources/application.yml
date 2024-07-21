@@ -5,6 +5,8 @@ server:
 logging:
   level:
     com.example.userservice: DEBUG
+    org.springframework: INFO
+    root: INFO
 
 spring:
   application:
@@ -33,3 +35,7 @@ eureka:
     # Eureka Server로 heartbeat 전송하는 시간 (디폴트 30초)
     lease-renewal-interval-in-seconds: 10
     prefer-ip-address: true
+
+token:
+  expiration_time: 86400000
+  secret: user_token
