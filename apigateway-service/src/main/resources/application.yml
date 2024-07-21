@@ -4,6 +4,8 @@ server:
 logging:
   level:
     com.example.apigatewayservice: DEBUG
+    org.springframework: INFO
+    root: INFO
 
 spring:
   application:
@@ -19,10 +21,34 @@ spring:
             postLogger: true
       routes:
         # user service
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/**
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/**
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더 값 초기화
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더 값 초기화
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더 값 초기화
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         # order service
         - id: order-service
           uri: lb://ORDER-SERVICE
