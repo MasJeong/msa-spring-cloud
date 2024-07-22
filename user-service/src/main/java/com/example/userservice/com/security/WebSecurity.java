@@ -30,7 +30,7 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            AuthenticationManager authenticationManager,
-                                           UserService userService) throws Exception {
+                                           CustomAuthenticationFilter customAuthenticationFilter) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
@@ -56,7 +56,7 @@ public class WebSecurity {
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 응답 헤더에 X-Frame-Options 추가 - 클릭재킹 공격 방어 - 동일 출처만 <iframe> 로드 가능.
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .addFilter(customAuthenticationFilter(authenticationManager, userService));
+                .addFilter(customAuthenticationFilter);
 
         return http.build();
     }
