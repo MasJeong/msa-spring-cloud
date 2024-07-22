@@ -37,5 +37,5 @@ eureka:
     prefer-ip-address: true
 
 token:
-  expiration_time: 3600
+  expiration-time: 1800000 # 1_800_000 30 minutes
   secret: myNameIsJihunthisIsVeryLongSe # 32 byte

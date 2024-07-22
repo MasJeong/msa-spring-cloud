@@ -86,7 +86,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Instant now = Instant.now();
 
-        String expireTime = env.getProperty("token.expiration_time");
+        String expireTime = env.getProperty("token.expiration-time");
         assert expireTime != null;
 
         String token = Jwts.builder()
