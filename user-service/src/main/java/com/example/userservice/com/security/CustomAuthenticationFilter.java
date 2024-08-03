@@ -39,7 +39,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 
     /**
-     * 사용자 인증을 처리 메서드.
+     * 사용자 인증 처리 메서드.
      * 클라이언트로부터 전달된 인증 정보를 바탕으로 사용자 인증을 처리하고 인증 결과를 반환한다.
      * @param request request
      * @param response response
@@ -68,6 +68,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         }
     }
 
+    /**
+     * 인증 성공 메서드
+     * @param request request
+     * @param response response
+     * @param chain chain
+     * @param auth auth
+     */
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
@@ -81,21 +88,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         assert secret != null;
 
         byte[] secretKeyBytes = Base64.getEncoder().encode(secret.getBytes());
-
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
-
-        Instant now = Instant.now();
 
         String expireTime = env.getProperty("token.expiration-time");
         assert expireTime != null;
 
+        Instant now = Instant.now();
+
         String token = Jwts.builder()
                 .subject(userDetails.getUserId())
-                .expiration(Date.from(now.plusMillis(Long.parseLong(expireTime))))
-                .issuedAt(Date.from(now))
-                .signWith(secretKey)
+                .expiration(Date.from(now.plusMillis(Long.parseLong(expireTime))))  // 만료 시간
+                .issuedAt(Date.from(now))   // 발급 시간
+                .signWith(secretKey)        // 서명
                 .compact();
 
         response.addHeader("token", token);
+        response.addHeader("userId", userDetails.getUserId());
     }
 }

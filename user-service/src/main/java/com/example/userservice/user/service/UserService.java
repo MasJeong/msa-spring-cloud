@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     /**
-     * 사용자 정보 조회
+     * 사용자 정보 조회 - 로그인
      * @param username 사용자 아이디(email)
      * @return UserDetails
      */
