@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +30,7 @@ public class UserController {
      * 사용자 전체 목록 조회
      * @return 사용자 목록
      */
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
         List<UserEntity> userList = userService.getAllUsers();
@@ -46,7 +46,7 @@ public class UserController {
      * @param userId 사용자 아이디
      * @return 사용자 상세정보
      */
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
 
         UserDto userDto = userService.getUserByUserId(userId);
@@ -61,7 +61,7 @@ public class UserController {
      * @param requestUser 저장할 요청 정보
      * @return responseUser
      */
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestUser requestUser) {
 
         UserDto userDto = modelMapper.map(requestUser, UserDto.class);
