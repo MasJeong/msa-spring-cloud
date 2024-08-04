@@ -45,6 +45,11 @@ public class UserService implements UserDetailsService {
                 new ArrayList<>());
     }
 
+    /**
+     * 사용자 정보 조회
+     * @param email 사용자 이메일 (아이디)
+     * @return 사용자 정보
+     */
     public UserDto getUserDetailsByEmail(String email) {
         Optional<UserEntity> opUserEntity = userRepository.findByEmail(email);
         UserEntity userEntity = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(email + ": not found"));
@@ -52,6 +57,11 @@ public class UserService implements UserDetailsService {
         return modelMapper.map(userEntity, UserDto.class);
     }
 
+    /**
+     * 회원가입 - 사용자 신규 등록
+     * @param userDto 사용자 등록 정보
+     * @return 신규 사용자 정보
+     */
     public UserDto createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
 
@@ -63,6 +73,11 @@ public class UserService implements UserDetailsService {
         return userDto;
     }
 
+    /**
+     * 사용자 및 주문 정보 조회
+     * @param userId 사용자 아이디
+     * @return 사용자 및 주문 정보
+     */
     @Transactional(readOnly = true)
     public UserDto getUserByUserId(String userId) {
 
@@ -81,6 +96,10 @@ public class UserService implements UserDetailsService {
         return userDto;
     }
 
+    /**
+     * 모든 사용자 목록 조회
+     * @return 모든 사용자 목록
+     */
     @Transactional(readOnly = true)
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
