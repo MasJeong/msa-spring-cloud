@@ -1,7 +1,6 @@
 package com.example.apigatewayservice.filter;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +17,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -29,6 +30,8 @@ import java.util.List;
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     private final Environment env;
+
+    public static final String TOKEN_TYPE = "Bearer ";
 
     public AuthorizationHeaderFilter(Environment env) {
         super(Config.class);
@@ -62,7 +65,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             String authorizationHeader = headers.get(0);
             log.info("authorizationHeader : {}", authorizationHeader);
 
-            String jwt = authorizationHeader.replace("Bearer", "");
+            String jwt = authorizationHeader.replace(TOKEN_TYPE, "");
 
             if (!isJwtValid(jwt)) {
                 return onError(exchange, "JWT is not valid", HttpStatus.UNAUTHORIZED);
@@ -78,14 +81,21 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
      * @return jwt 유효 여부 (유효하면 true, 유효하지 않으면 false)
      */
     private boolean isJwtValid(String token) {
-        boolean rtnValue = true;
+        if(StringUtils.isEmpty(token)) {
+            return false;
+        }
 
-        String subject = null;
+        String subject;
 
         try {
             String secret = env.getProperty("token.secret");
-            SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+            Assert.notNull(secret, "secret should not be empty");
 
+            // 비밀 키 생성
+            byte[] secretKeyBytes = Base64.getEncoder().encode(secret.getBytes(StandardCharsets.UTF_8));
+            SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+
+            // JWT parse
             subject = String.valueOf(Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
@@ -93,14 +103,10 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                     .getPayload());
 
         } catch (Exception e) {
-            rtnValue = false;
+            return false;
         }
 
-        if (StringUtils.isEmpty(subject)) {
-            rtnValue = false;
-        }
-
-        return rtnValue;
+        return !StringUtils.isEmpty(subject);
     }
 
     /**
