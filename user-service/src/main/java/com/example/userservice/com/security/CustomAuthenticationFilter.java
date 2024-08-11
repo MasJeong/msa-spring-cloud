@@ -10,6 +10,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -87,7 +89,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String secret = env.getProperty("token.secret");
         assert secret != null;
 
-        byte[] secretKeyBytes = Base64.getEncoder().encode(secret.getBytes());
+        byte[] secretKeyBytes = Base64.getEncoder().encode(secret.getBytes(StandardCharsets.UTF_8));
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
 
         String expireTime = env.getProperty("token.expiration-time");
@@ -102,7 +104,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .signWith(secretKey)        // 서명
                 .compact();
 
-        response.addHeader("token", token);
+        response.addHeader(HttpHeaders.AUTHORIZATION, token);
         response.addHeader("userId", userDetails.getUserId());
     }
 }
