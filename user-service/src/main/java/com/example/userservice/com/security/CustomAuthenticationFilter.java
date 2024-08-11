@@ -89,6 +89,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String secret = env.getProperty("token.secret");
         assert secret != null;
 
+        // 비밀 키 생성
         byte[] secretKeyBytes = Base64.getEncoder().encode(secret.getBytes(StandardCharsets.UTF_8));
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
 
