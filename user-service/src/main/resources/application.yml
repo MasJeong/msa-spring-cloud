@@ -38,4 +38,5 @@ eureka:
 
 token:
   expiration-time: 1800000 # 1_800_000 30 minutes
-  secret: myNameIsJihunthisIsVeryLongSe # 32 byte
+#  secret: myNameIsJihunthisIsVeryLongSe # 32 byte
+  secret: user_token
