@@ -1,18 +1,23 @@
 package com.example.apigatewayservice.filter;
 
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.SecretKey;
 import java.util.List;
 
 /**
@@ -21,10 +26,14 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     private final Environment env;
+
+    public AuthorizationHeaderFilter(Environment env) {
+        super(Config.class);
+        this.env = env;
+    }
 
     /**
      * Filter Config
@@ -52,6 +61,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             String authorizationHeader = headers.get(0);
             log.info("authorizationHeader : {}", authorizationHeader);
+
             String jwt = authorizationHeader.replace("Bearer", "");
 
             if (!isJwtValid(jwt)) {
@@ -64,11 +74,33 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
     /**
      * jwt 유효성 검사
-     * @param jwt 토큰 값
+     * @param token 토큰 값
      * @return jwt 유효 여부 (유효하면 true, 유효하지 않으면 false)
      */
-    private boolean isJwtValid(String jwt) {
-        return false;
+    private boolean isJwtValid(String token) {
+        boolean rtnValue = true;
+
+        String subject = null;
+
+        try {
+            String secret = env.getProperty("token.secret");
+            SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+
+            subject = String.valueOf(Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload());
+
+        } catch (Exception e) {
+            rtnValue = false;
+        }
+
+        if (StringUtils.isEmpty(subject)) {
+            rtnValue = false;
+        }
+
+        return rtnValue;
     }
 
     /**
@@ -79,6 +111,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
      * @return Mono<Void> 오류 응답을 비동기적으로 처리하는 단일값 (web flux)
      */
     private Mono<Void> onError(ServerWebExchange exchange, String errorMessage, HttpStatus httpStatus) {
-        return null;
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(httpStatus);
+
+        log.error(errorMessage);
+
+        return response.setComplete();
     }
 }
