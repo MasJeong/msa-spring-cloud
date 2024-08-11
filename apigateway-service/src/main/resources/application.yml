@@ -92,4 +92,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka # discoveryservice
 
 token:
-  secret: user_token
+  secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
