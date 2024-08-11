@@ -49,6 +49,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter # 인증 필터 적용
         # order service
         - id: order-service
           uri: lb://ORDER-SERVICE
@@ -89,3 +90,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka # discoveryservice
+
+token:
+  secret: user_token
