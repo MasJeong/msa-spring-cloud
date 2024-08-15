@@ -103,6 +103,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                     .getPayload());
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             return false;
         }
 
