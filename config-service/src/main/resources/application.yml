@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///c/Users/95_cs/Desktop/study/springProject/MSA/MSA/git-local-repo
+
+server:
+  port: 8888
