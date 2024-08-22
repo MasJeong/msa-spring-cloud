@@ -36,7 +36,6 @@ eureka:
     lease-renewal-interval-in-seconds: 10
     prefer-ip-address: true
 
-token:
-  expiration-time: 1800000 # 1_800_000 30 minutes
-#  secret: myNameIsJihunthisIsVeryLongSe # 32 byte
-  secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
+#token:
+#  expiration-time: 1800000 # 1_800_000 30 minutes
+#  secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
