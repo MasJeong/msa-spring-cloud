@@ -43,12 +43,12 @@ public class WebSecurity {
                                     log.debug("client ip is = {}", clientIp);
 
                                     // 허용된 IP 리스트
-                                    String[] allowedIps = {"192.168.35.194", "192.168.35.195", "192.168.35.196"};
+//                                    String[] allowedIps = {"192.168.35.194", "192.168.35.195", "192.168.35.196"};
 
                                     // IP가 허용된 리스트에 포함되어 있는지 확인
-                                    boolean isAllowed = Arrays.asList(allowedIps).contains(clientIp);
+//                                    boolean isAllowed = Arrays.asList(allowedIps).contains(clientIp);
 
-                                    return new AuthorizationDecision(isAllowed);
+                                    return new AuthorizationDecision(true);
                                 })
                 )
                 .authenticationManager(authenticationManager)
