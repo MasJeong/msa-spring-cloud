@@ -33,7 +33,7 @@ public class UserController {
      * 사용자 전체 목록 조회
      * @return 사용자 목록
      */
-    @GetMapping
+    @GetMapping("/healthCheck")
     public String healthCheck() {
         return String.format("It's working is User Service"
                 + ", port(local.server.port)=" + env.getProperty("local.server.port")
