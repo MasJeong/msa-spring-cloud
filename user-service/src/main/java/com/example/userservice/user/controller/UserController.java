@@ -30,8 +30,8 @@ public class UserController {
     private final Environment env;
 
     /**
-     * 사용자 전체 목록 조회
-     * @return 사용자 목록
+     * User Service 상태 체크
+     * @return 환경 정보
      */
     @GetMapping("/health-check")
     public String healthCheck() {
