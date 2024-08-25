@@ -17,8 +17,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.Arrays;
-
 @Slf4j
 @Configuration
 @EnableWebSecurity
@@ -34,8 +32,8 @@ public class WebSecurity {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/users/**").permitAll()
-                                .requestMatchers("/actuator/**").permitAll()
+                        authorize.requestMatchers("/actuator/**").permitAll()
+//                                .requestMatchers("/users/**").permitAll()
                                 .requestMatchers("/health-check/**").permitAll()
                                 .requestMatchers("/error/**").permitAll()
                                 .requestMatchers("/**").access((authentication, request) -> {
