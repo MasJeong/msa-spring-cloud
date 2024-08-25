@@ -39,8 +39,8 @@ public class WebSecurity {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-//                        authorize.requestMatchers("/actuator/**").permitAll()
-                        authorize.requestMatchers("/health-check/**").permitAll()
+                        authorize.requestMatchers("/actuator/**").permitAll()
+                                .requestMatchers("/health-check/**").permitAll()
                                 .requestMatchers("/error/**").permitAll()
                                 .requestMatchers("/**").access((authentication, request) -> {
                                     String clientIp = request.getRequest().getRemoteAddr();
