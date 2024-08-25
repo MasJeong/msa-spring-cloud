@@ -25,6 +25,13 @@ public class WebSecurity {
 
     private final Environment env;
 
+    /**
+     * Spring Security 필터 체인 설정
+     * @param http 보안 설정 구성하는 데 사용
+     * @param authenticationManager 인증 매니저 - 사용자 인증 처리에 사용
+     * @param customAuthenticationFilter 사용자 인증 커스텀 필터
+     * @return Spring Security 필터 체인 bean
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            AuthenticationManager authenticationManager,
@@ -32,9 +39,8 @@ public class WebSecurity {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/actuator/**").permitAll()
-//                                .requestMatchers("/users/**").permitAll()
-                                .requestMatchers("/health-check/**").permitAll()
+//                        authorize.requestMatchers("/actuator/**").permitAll()
+                        authorize.requestMatchers("/health-check/**").permitAll()
                                 .requestMatchers("/error/**").permitAll()
                                 .requestMatchers("/**").access((authentication, request) -> {
                                     String clientIp = request.getRequest().getRemoteAddr();
