@@ -40,3 +40,9 @@ eureka:
 #token:
 #  expiration-time: 1800000 # 1_800_000 30 minutes
 #  secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
