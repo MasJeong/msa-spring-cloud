@@ -50,6 +50,15 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter # 인증 필터 적용
+        # Actuator 라우팅 설정
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         # order service
         - id: order-service
           uri: lb://ORDER-SERVICE
@@ -93,3 +102,10 @@ eureka:
 
 token:
   secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
