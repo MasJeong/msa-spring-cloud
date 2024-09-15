@@ -11,15 +11,21 @@ logging:
 spring:
   application:
     name: user-service
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
   datasource:
-    url: jdbc:mariadb://127.0.0.1:3306/user_db
-    username: webuser
-    password: webuser
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
+    generate-ddl: true
+    defer-datasource-initialization: true
 
 eureka:
   client:
@@ -36,13 +42,12 @@ eureka:
     lease-renewal-interval-in-seconds: 10
     prefer-ip-address: true
 
-# 환경설정 정보를 외부에 작성(ecommerce.yml)하여 주석 처리한다.
-#token:
-#  expiration-time: 1800000 # 1_800_000 30 minutes
-#  secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
-
 management:
   endpoints:
     web:
       exposure:
         include: refresh, health, beans
+
+token:
+  expiration-time: 1800000 # 1_800_000 30 minutes
+  secret: 3hGd!jK6@f8Lz2D*OpQeR3sT1vW9yXz4
