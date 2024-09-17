@@ -1,6 +1,13 @@
 spring:
   application:
     name: config-service
+  # RabbitMQ 설정 정보
+  rabbitmq:
+    host: 127.0.0.1
+    port: 15672
+    username: guest
+    password: guest
+
   profiles:
     active: native
   cloud:
@@ -19,3 +26,10 @@ spring:
 
 server:
   port: 8888
+
+# actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh

@@ -20,6 +20,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  # RabbitMQ 설정 정보
+  rabbitmq:
+    host: 127.0.0.1
+    port: 15672
+    username: guest
+    password: guest
 
 eureka:
   client:
@@ -45,4 +51,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans
+        include: refresh, health, beans, busrefresh
