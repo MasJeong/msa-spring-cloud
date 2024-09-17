@@ -35,6 +35,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // RabbitMQ와 Spring Cloud Bus를 통해 Connection
+    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'io.projectreactor:reactor-test'
