@@ -5,8 +5,8 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672  # AMPQ port: 5672, 웹관리콘솔: 15672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
 
   profiles:
     active: native

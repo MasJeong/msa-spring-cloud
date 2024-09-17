@@ -14,8 +14,8 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
   cloud:
     gateway:
       # Global Filter 설정 - Global과 Custom, Logging Filter 모두 적용 가능
