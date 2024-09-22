@@ -7,7 +7,7 @@ spring:
     port: 5672  # AMPQ port: 5672, 웹관리콘솔: 15672
     username: admin
     password: admin
-
+  # profiles 설정을 native-file-repository로 설정한다.
   profiles:
     active: native
   cloud:
@@ -19,7 +19,7 @@ spring:
         # git repository에서 환경설정 정보를 가져온다.
         git:
           uri: https://github.com/MasJeong/spring-cloud-config
-#          private repository 인 경우 아이디와 비밀번호를 입력한다.
+          # private repository 인 경우 아이디와 비밀번호를 입력한다.
 #          username:
 #          password:
 #          uri: file://${user.home}\Desktop\study\springProject\MSA\MSA\git-local-repo

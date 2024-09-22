@@ -11,11 +11,11 @@ logging:
 spring:
   application:
     name: user-service
-  datasource:
-    url: jdbc:mariadb://127.0.0.1:3306/user_db
-    username: webuser
-    password: webuser
-    driver-class-name: org.mariadb.jdbc.Driver
+#  datasource:
+#    url: jdbc:mariadb://127.0.0.1:3306/user_db
+#    username: webuser
+#    password: webuser
+#    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,6 +26,9 @@ spring:
     port: 5672
     username: admin
     password: admin
+  h2:
+    console:
+      enabled: false
 
 eureka:
   client:
