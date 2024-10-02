@@ -1,3 +1,9 @@
-# spring cloud 암복호화 기능 - 임시 대칭키
+# spring cloud 암복호화 기능
 encrypt:
-  key: jeongjihunabcdefghijklmnopqrstuvwxyz0123456789
+  # 대칭키
+#  key: jeongjihunabcdefghijklmnopqrstuvwxyz0123456789
+  # 비대칭키 (keytool: JDK 명령줄 유틸리티 사용)
+  key-store:
+    location: file:///${user.home}\Desktop\study\springProject\MSA\MSA\keystore\apiEncryptionKey.jks
+    password: test1234
+    alias: apiEncryptionKey
