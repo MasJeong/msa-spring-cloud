@@ -1,0 +1,31 @@
+server:
+  port: 0
+
+logging:
+  level:
+    com.example.catalogservice: DEBUG
+
+spring:
+  application:
+    name: catalog-service
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:3306/catalog_db
+    username: catalog_user
+    password: catalog_user
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true

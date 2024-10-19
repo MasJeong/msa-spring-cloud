@@ -1,0 +1,115 @@
+server:
+  port: 8000
+
+logging:
+  level:
+    com.example.apigatewayservice: DEBUG
+    org.springframework: INFO
+    root: INFO
+
+spring:
+  application:
+    name: apigateway-service
+  # RabbitMQ 설정 정보
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+  cloud:
+    gateway:
+      # Global Filter 설정 - Global과 Custom, Logging Filter 모두 적용 가능
+      default-filters:
+        - name: GlobalFilter # GlobalFilter 파일명
+          args:              # GlobalFilter.Config 파라미터 세팅
+            baseMessage: Spring Cloud Gateway Filter
+            preLogger: true
+            postLogger: true
+      routes:
+        # 사용자 로그인
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie # 헤더 값 초기화
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment} # 쉼표 기준 전자 url을 후자로 변경함
+        # 사용자 회원가입
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        # Actuator 라우팅 설정
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        # 사용자 GET 요청
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter # 인증 필터 적용
+        # order service
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+        # catalog service
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/**
+        # first service
+        - id: first-service
+          uri: lb://MY-FIRST-SERVICE
+          predicates:
+            - Path=/first-service/**
+          filters:
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2
+            - CustomFilter # CustomFilter 파일명
+        # second service
+        - id: second-service
+          uri: lb://MY-SECOND-SERVICE
+          predicates:
+            - Path=/second-service/**
+          filters:
+#            - AddRequestHeader=second-request, second-request-header2
+#            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter  # CustomFilter 파일명
+            - name: LoggingFilter # LoggingFilter 파일명
+              args:
+                baseMessage: hi, there.
+                preLogger: true
+                postLogger: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka # discoveryservice
+
+#token:
+#  secret:
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh
