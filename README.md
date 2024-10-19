@@ -2,7 +2,7 @@
 
 ### 구성 요소
 - **config-service**: Configuration service
-- **discovery-service**: Service Search
+- **discovery-service**: Service registration and search
 - **apigateway-service**: Spring Cloud Gateway
 
 ### 샘플 코드
