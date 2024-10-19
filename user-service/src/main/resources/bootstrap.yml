@@ -1,9 +1,0 @@
-spring:
-  cloud:
-    config:
-      uri: http://127.0.0.1:8888
-      # application 이름을 지정하기 때문에 config 서비스의 application.yml 파일을 불러온다.
-#      name: config-service
-      name: user-service
-#  profiles:
-#    active: dev
