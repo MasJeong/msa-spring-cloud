@@ -6,6 +6,10 @@ import com.example.userservice.user.repository.UserRepository;
 import com.example.userservice.user.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +34,10 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final ModelMapper modelMapper;
+
+    private final RestTemplate restTemplate;
+
+    private final Environment env;
 
     /**
      * 사용자 정보 조회 - 로그인
@@ -89,8 +98,15 @@ public class UserService implements UserDetailsService {
 
         UserDto userDto = modelMapper.map(userEntity, UserDto.class);
 
-        // TODO 추후 feign client를 통한 주문 목록 가져오기.
-        List<ResponseOrder> orders = new ArrayList<>();
+        // RestTemplate 사용하여 order service 요청
+        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
+        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
+                new ParameterizedTypeReference<>() {
+
+
+                });
+
+        List<ResponseOrder> orders = orderListResponse.getBody();
         userDto.setOrders(orders);
 
         return userDto;
