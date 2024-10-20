@@ -17,8 +17,8 @@ spring:
         native:
           search-locations: file:///${user.home}\Desktop\study\springProject\MSA\MSA\native-file-repo
         # git repository에서 환경설정 정보를 가져온다.
-        git:
-          uri: https://github.com/MasJeong/spring-cloud-config
+#        git:
+#          uri: https://github.com/MasJeong/spring-cloud-config
           # private repository 인 경우 아이디와 비밀번호를 입력한다.
 #          username:
 #          password:
