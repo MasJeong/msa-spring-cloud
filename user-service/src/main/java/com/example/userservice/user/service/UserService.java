@@ -99,15 +99,18 @@ public class UserService implements UserDetailsService {
         UserDto userDto = modelMapper.map(userEntity, UserDto.class);
 
         // RestTemplate 사용하여 order service 요청
-        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
-                new ParameterizedTypeReference<>() {
+        Optional.ofNullable(env.getProperty("order_service.url")).ifPresent(orderServiceUrl -> {
+            String requestOrderUrl = String.format(orderServiceUrl, userId);
 
+            ResponseEntity<List<ResponseOrder>> orderListResponse =
+                    restTemplate.exchange(requestOrderUrl,
+                            HttpMethod.GET,
+                            null,
+                            new ParameterizedTypeReference<>() {});
 
-                });
-
-        List<ResponseOrder> orders = orderListResponse.getBody();
-        userDto.setOrders(orders);
+            List<ResponseOrder> orders = orderListResponse.getBody();
+            userDto.setOrders(orders);
+        });
 
         return userDto;
     }
