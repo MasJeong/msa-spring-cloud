@@ -104,9 +104,6 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka # discoveryservice
 
-#token:
-#  secret:
-
 # Actuator 설정
 management:
   endpoints:
