@@ -66,7 +66,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     )
             );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to process authentication request", e);
         }
     }
 
