@@ -35,11 +35,15 @@ public class UserController {
      */
     @GetMapping("/health-check")
     public String healthCheck() {
-        return String.format("It's working is User Service"
-                + ", port(local.server.port)=" + env.getProperty("local.server.port")
-                + ", port(server.port)=" + env.getProperty("server.port")
-                + ", token secret=" + env.getProperty("token.secret")
-                + ", token expiration time=" + env.getProperty("token.expiration-time")
+        return String.format("It's working in User Service, " +
+                        "port(local.server.port)=%s, " +
+                        "port(server.port)=%s, " +
+                        "token secret=%s, " +
+                        "token expiration time=%s",
+                env.getProperty("local.server.port"),
+                env.getProperty("server.port"),
+                env.getProperty("token.secret"),
+                env.getProperty("token.expiration-time")
         );
     }
 
@@ -76,7 +80,7 @@ public class UserController {
     /**
      * 사용자 정보 저장
      * @param requestUser 저장할 요청 정보
-     * @return responseUser
+     * @return responseUser 사용자 및 주문 정보
      */
     @PostMapping
     public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestUser requestUser) {
