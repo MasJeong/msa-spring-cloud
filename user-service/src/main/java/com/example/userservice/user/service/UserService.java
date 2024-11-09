@@ -7,7 +7,6 @@ import com.example.userservice.user.repository.UserRepository;
 import com.example.userservice.user.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,8 +34,6 @@ public class UserService implements UserDetailsService {
 //    private final RestTemplate restTemplate;
 
     private final OrderServiceClient orderServiceClient;
-
-    private final Environment env;
 
     /**
      * 사용자 정보 조회 - 로그인
