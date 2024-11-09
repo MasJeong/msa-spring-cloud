@@ -1,15 +1,13 @@
 package com.example.userservice.user.service;
 
+import com.example.userservice.user.client.OrderServiceClient;
 import com.example.userservice.user.domain.UserEntity;
 import com.example.userservice.user.dto.UserDto;
 import com.example.userservice.user.repository.UserRepository;
 import com.example.userservice.user.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +32,9 @@ public class UserService implements UserDetailsService {
 
     private final ModelMapper modelMapper;
 
-    private final RestTemplate restTemplate;
+//    private final RestTemplate restTemplate;
+
+    private final OrderServiceClient orderServiceClient;
 
     private final Environment env;
 
@@ -98,19 +97,23 @@ public class UserService implements UserDetailsService {
 
         UserDto userDto = modelMapper.map(userEntity, UserDto.class);
 
+        // FeignClient 사용하여 order service 요청
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        userDto.setOrders(orders);
+
         // RestTemplate 사용하여 order service 요청
-        Optional.ofNullable(env.getProperty("order_service.url")).ifPresent(orderServiceUrl -> {
-            String requestOrderUrl = String.format(orderServiceUrl, userId);
-
-            ResponseEntity<List<ResponseOrder>> orderListResponse =
-                    restTemplate.exchange(requestOrderUrl,
-                            HttpMethod.GET,
-                            null,
-                            new ParameterizedTypeReference<>() {});
-
-            List<ResponseOrder> orders = orderListResponse.getBody();
-            userDto.setOrders(orders);
-        });
+//        Optional.ofNullable(env.getProperty("order_service.url")).ifPresent(orderServiceUrl -> {
+//            String requestOrderUrl = String.format(orderServiceUrl, userId);
+//
+//            ResponseEntity<List<ResponseOrder>> orderListResponse =
+//                    restTemplate.exchange(requestOrderUrl,
+//                            HttpMethod.GET,
+//                            null,
+//                            new ParameterizedTypeReference<>() {});
+//
+//            List<ResponseOrder> orders = orderListResponse.getBody();
+//            userDto.setOrders(orders);
+//        });
 
         return userDto;
     }
