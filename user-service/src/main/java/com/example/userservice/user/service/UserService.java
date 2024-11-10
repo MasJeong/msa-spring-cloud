@@ -16,10 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -122,7 +119,8 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(readOnly = true)
     public List<ResponseUser> getAllUsers() {
-        return userRepository.findAll()
+        return Optional.ofNullable(userRepository.findAll())
+                .orElseGet(Collections::emptyList)
                 .stream()
                 .map(user -> modelMapper.map(user, ResponseUser.class))
                 .toList();

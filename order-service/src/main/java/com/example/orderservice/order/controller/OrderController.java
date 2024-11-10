@@ -1,6 +1,5 @@
 package com.example.orderservice.order.controller;
 
-import com.example.orderservice.order.domain.OrderEntity;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.service.OrderService;
 import com.example.orderservice.order.vo.RequestOrder;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,11 +29,7 @@ public class OrderController {
     @GetMapping("{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> getOrders(@PathVariable("userId") String userId) {
 
-        List<OrderEntity> orderList = orderService.getOrdersByUserId(userId);
-
-        List<ResponseOrder> responseOrders = new ArrayList<>();
-
-        orderList.forEach(order -> responseOrders.add(modelMapper.map(order, ResponseOrder.class)));
+        List<ResponseOrder> responseOrders = orderService.getOrdersByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseOrders);
     }
