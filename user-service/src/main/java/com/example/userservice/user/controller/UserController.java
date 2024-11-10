@@ -1,6 +1,5 @@
 package com.example.userservice.user.controller;
 
-import com.example.userservice.user.domain.UserEntity;
 import com.example.userservice.user.dto.UserDto;
 import com.example.userservice.user.service.UserService;
 import com.example.userservice.user.vo.RequestUser;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -54,10 +52,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
-        List<UserEntity> userList = userService.getAllUsers();
-        List<ResponseUser> responseUsers = new ArrayList<>();
-
-        userList.forEach(user -> responseUsers.add(modelMapper.map(user, ResponseUser.class)));
+        List<ResponseUser> responseUsers = userService.getAllUsers();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseUsers);
     }
@@ -70,9 +65,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
 
-        UserDto userDto = userService.getUserByUserId(userId);
-
-        ResponseUser responseUser = modelMapper.map(userDto, ResponseUser.class);
+        ResponseUser responseUser = userService.getUserByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }
@@ -87,9 +80,7 @@ public class UserController {
 
         UserDto userDto = modelMapper.map(requestUser, UserDto.class);
 
-        userService.createUser(userDto);
-
-        ResponseUser responseUser = modelMapper.map(userDto, ResponseUser.class);
+        ResponseUser responseUser = userService.createUser(userDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }

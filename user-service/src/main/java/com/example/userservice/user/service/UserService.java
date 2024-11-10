@@ -5,6 +5,7 @@ import com.example.userservice.user.domain.UserEntity;
 import com.example.userservice.user.dto.UserDto;
 import com.example.userservice.user.repository.UserRepository;
 import com.example.userservice.user.vo.ResponseOrder;
+import com.example.userservice.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.User;
@@ -67,7 +68,7 @@ public class UserService implements UserDetailsService {
      * @param userDto 사용자 등록 정보
      * @return 신규 사용자 정보
      */
-    public UserDto createUser(UserDto userDto) {
+    public ResponseUser createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
 
         UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
@@ -75,7 +76,7 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(userEntity);
 
-        return userDto;
+        return modelMapper.map(userDto, ResponseUser.class);
     }
 
     /**
@@ -84,7 +85,7 @@ public class UserService implements UserDetailsService {
      * @return 사용자 및 주문 정보
      */
     @Transactional(readOnly = true)
-    public UserDto getUserByUserId(String userId) {
+    public ResponseUser getUserByUserId(String userId) {
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
@@ -112,7 +113,7 @@ public class UserService implements UserDetailsService {
 //            userDto.setOrders(orders);
 //        });
 
-        return userDto;
+        return modelMapper.map(userDto, ResponseUser.class);
     }
 
     /**
@@ -120,7 +121,10 @@ public class UserService implements UserDetailsService {
      * @return 모든 사용자 목록
      */
     @Transactional(readOnly = true)
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<ResponseUser> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> modelMapper.map(user, ResponseUser.class))
+                .toList();
     }
 }
