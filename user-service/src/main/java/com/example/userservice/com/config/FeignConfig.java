@@ -4,6 +4,7 @@ import com.example.userservice.user.error.FeignErrorDecoder;
 import feign.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 public class FeignConfig {
@@ -22,7 +23,7 @@ public class FeignConfig {
      * @return Feign ErrorDecoder Bean
      */
     @Bean
-    public FeignErrorDecoder feignErrorDecoder() {
-        return new FeignErrorDecoder();
+    public FeignErrorDecoder feignErrorDecoder(Environment env) {
+        return new FeignErrorDecoder(env);
     }
 }
