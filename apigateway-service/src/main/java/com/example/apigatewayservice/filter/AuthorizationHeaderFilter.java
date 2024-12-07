@@ -1,9 +1,12 @@
 package com.example.apigatewayservice.filter;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
@@ -41,8 +44,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     /**
      * Filter Config
      */
+    @Getter
     public static class Config {
-
+        private String tokenType = TOKEN_TYPE;
     }
 
     /**
@@ -56,22 +60,31 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             ServerHttpRequest request = exchange.getRequest();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "no authorization header", HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "no authorization header");
             }
 
             List<String> headers = request.getHeaders().get(HttpHeaders.AUTHORIZATION);
-            Assert.notEmpty(headers, "Headers should not be empty");
+            assert headers != null;
 
             String authorizationHeader = headers.get(0);
-            log.info("authorizationHeader : {}", authorizationHeader);
 
-            String jwt = authorizationHeader.replace(TOKEN_TYPE, "");
+            String jwt = authorizationHeader.replace(config.getTokenType(), "");
 
             if (!isJwtValid(jwt)) {
-                return onError(exchange, "JWT is not valid", HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "JWT is not valid");
             }
 
-            return chain.filter(exchange);
+            Claims claims = getClaims(jwt);
+            assert claims != null;
+
+            String userId = String.valueOf(claims.get("sub"));
+
+            ServerHttpRequest newRequest = request.mutate()
+                    .header("X-USER-ID", userId)
+                    .build();
+
+            // 수정된 요청으로 객체 생성
+            return chain.filter(exchange.mutate().request(newRequest).build());
         });
     }
 
@@ -81,11 +94,22 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
      * @return jwt 유효 여부 (유효하면 true, 유효하지 않으면 false)
      */
     private boolean isJwtValid(String token) {
-        if(StringUtils.isEmpty(token)) {
-            return false;
-        }
+        if(StringUtils.isEmpty(token)) return false;
 
-        String subject;
+        Claims claims = getClaims(token);
+
+        if (claims == null) return false;
+
+        return !StringUtils.isEmpty(String.valueOf(claims));
+    }
+
+    /**
+     * JWT 클레임을 가져온다.
+     * @param token JWT
+     * @return JWT 클레임
+     */
+    private @Nullable Claims getClaims(String token) {
+        Claims payload;
 
         try {
             String secret = env.getProperty("token.secret");
@@ -96,30 +120,29 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
 
             // JWT parse
-            subject = String.valueOf(Jwts.parser()
+            payload = Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token)
-                    .getPayload());
+                    .getPayload();
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            return false;
+            return null;
         }
 
-        return !StringUtils.isEmpty(subject);
+        return payload;
     }
 
     /**
      * 오류 응답을 생성
-     * @param exchange 현재의 ServerWebExchange 객체
+     * @param exchange     현재의 ServerWebExchange 객체
      * @param errorMessage 오류 메시지
-     * @param httpStatus 반환할 HTTP 상태 코드
      * @return Mono<Void> 오류 응답을 비동기적으로 처리하는 단일값 (web flux)
      */
-    private Mono<Void> onError(ServerWebExchange exchange, String errorMessage, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange, String errorMessage) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
         log.error(errorMessage);
 

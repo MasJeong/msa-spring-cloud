@@ -10,7 +10,10 @@ logging:
 spring:
   application:
     name: apigateway-service
-  # RabbitMQ 설정 정보
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
   rabbitmq:
     host: 127.0.0.1
     port: 5672
@@ -62,7 +65,13 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter # 인증 필터 적용
+            - name: AuthorizationHeaderFilter # 인증 필터 적용
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10  # 초당 10개씩 토큰 생성
+                redis-rate-limiter.burstCapacity: 10  # 버킷 용량 (토큰 최대 10개)
+                redis-rate-limiter.requestedTokens: 1 # 요청 시 1개의 토큰을 사용
         # order service
         - id: order-service
           uri: lb://ORDER-SERVICE
@@ -96,6 +105,17 @@ spring:
                 baseMessage: hi, there.
                 preLogger: true
                 postLogger: true
+#        - id: rate-limiter
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/**
+#          filters:
+#            - name: RequestRateLimiter
+#              args:
+#                key-resolver: "#{@userKeyResolver}"
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 10
+#                redis-rate-limiter.requestedTokens: 1
 
 eureka:
   client:
