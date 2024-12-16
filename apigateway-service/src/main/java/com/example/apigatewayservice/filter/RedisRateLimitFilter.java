@@ -27,40 +27,32 @@ public class RedisRateLimitFilter extends AbstractGatewayFilterFactory<RedisRate
         this.redisRateLimiter = redisRateLimiter;
     }
 
+    @Getter @Setter
+    public static class Config implements HasRouteId {
+        private String routeId;
+    }
+
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            KeyResolver keyResolver = getOrDefault(config.keyResolver, userKeyResolver);
-            RedisRateLimiter rateLimiter1 = getOrDefault(config.rateLimiter, redisRateLimiter);
-
             String routeId = config.getRouteId();
 
             log.debug("routeId: {}", routeId);
 
-            return keyResolver.resolve(exchange)
-                    .flatMap(key -> rateLimiter1.isAllowed(routeId, key))
+            return userKeyResolver.resolve(exchange)
+                    .flatMap(key -> redisRateLimiter.isAllowed(routeId, key))
                     .flatMap(rateLimitResponse -> {
+                        // Rate limit이 허용된 경우
                         if (rateLimitResponse.isAllowed()) {
                             log.debug("Rate limit pass. ");
 
-                            return chain.filter(exchange);  // Rate limit이 허용된 경우
-                        } else {
-                            log.warn("Rate limit failed. ");
-
-                            return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Rate limit exceeded"));
+                            return chain.filter(exchange);
                         }
+
+                        log.warn("Rate limit exceeded. ");
+
+                        return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Rate limit exceeded"));
                     });
         };
-    }
-
-    private <T> T getOrDefault(T configValue, T defaultValue) {
-        return configValue != null ? configValue : defaultValue;
-    }
-
-    @Getter @Setter
-    public static class Config implements HasRouteId {
-        private KeyResolver keyResolver;
-        private RedisRateLimiter rateLimiter;
-        private String routeId;
     }
 }
