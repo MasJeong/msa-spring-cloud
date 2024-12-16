@@ -9,12 +9,11 @@ import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.support.HasRouteId;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Component
+//@Component
 public class RedisRateLimitFilter extends AbstractGatewayFilterFactory<RedisRateLimitFilter.Config> {
 
     private final KeyResolver userKeyResolver;

@@ -17,10 +17,10 @@ import reactor.core.publisher.Mono;
 public class RateLimiterConfig {
 
     /** 초당 버킷에 추가되는 토큰 개수 */
-    private static final int REPLENISH_RATE = 1;
+    private static final int REPLENISH_RATE = 10;
 
     /** 버킷에 담을 수 있는 최대 토큰 개수 */
-    private static final int BURST_CAPACITY = 1;
+    private static final int BURST_CAPACITY = 10;
 
     /** API 요청 시 소비되는 토큰 개수 */
     private static final int REQUESTED_TOKENS = 1;

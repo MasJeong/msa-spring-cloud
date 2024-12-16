@@ -67,12 +67,12 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - name: AuthorizationHeaderFilter # 인증 필터 적용
-            - name: RedisRateLimitFilter
-#            - name: RequestRateLimiter
+#            - name: RedisRateLimitFilter # 2024-12-16 custom 필터 사용하지 않음
+            - name: RequestRateLimiter
 #              args:
 #                key-resolver: "#{@userKeyResolver}"
-#                redis-rate-limiter.replenishRate: 5  # 초당 10개씩 토큰 생성
-#                redis-rate-limiter.burstCapacity: 10  # 버킷 용량 (토큰 최대 10개)
+#                redis-rate-limiter.replenishRate: 1  # 초당 10개씩 토큰 생성
+#                redis-rate-limiter.burstCapacity: 1  # 버킷 용량 (토큰 최대 10개)
 #                redis-rate-limiter.requestedTokens: 1 # 요청 시 1개의 토큰을 사용
         # order service
         - id: order-service
@@ -107,17 +107,6 @@ spring:
                 baseMessage: hi, there.
                 preLogger: true
                 postLogger: true
-#        - id: rate-limiter
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/**
-#          filters:
-#            - name: RequestRateLimiter
-#              args:
-#                key-resolver: "#{@userKeyResolver}"
-#                redis-rate-limiter.replenishRate: 1
-#                redis-rate-limiter.burstCapacity: 10
-#                redis-rate-limiter.requestedTokens: 1
 
 eureka:
   client:
