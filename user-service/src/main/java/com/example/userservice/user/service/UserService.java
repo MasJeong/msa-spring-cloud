@@ -16,11 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -39,6 +41,7 @@ public class UserService implements UserDetailsService {
      * @return UserDetails
      */
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> opUserEntity = userRepository.findByEmail(username);
         UserEntity userEntity = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(username + ": not found"));
@@ -53,6 +56,7 @@ public class UserService implements UserDetailsService {
      * @param email 사용자 이메일 (아이디)
      * @return 사용자 정보
      */
+    @Transactional(readOnly = true)
     public UserDto getUserDetailsByEmail(String email) {
         Optional<UserEntity> opUserEntity = userRepository.findByEmail(email);
         UserEntity userEntity = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(email + ": not found"));
@@ -65,6 +69,7 @@ public class UserService implements UserDetailsService {
      * @param userDto 사용자 등록 정보
      * @return 신규 사용자 정보
      */
+    @Transactional
     public ResponseUser createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
 
@@ -81,9 +86,7 @@ public class UserService implements UserDetailsService {
      * @param userId 사용자 아이디
      * @return 사용자 및 주문 정보
      */
-    @Transactional(readOnly = true)
     public ResponseUser getUserByUserId(String userId) {
-
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null) {
@@ -115,14 +118,11 @@ public class UserService implements UserDetailsService {
 
     /**
      * 모든 사용자 목록 조회
+     *
      * @return 모든 사용자 목록
      */
     @Transactional(readOnly = true)
-    public List<ResponseUser> getAllUsers() {
-        return Optional.ofNullable(userRepository.findAll())
-                .orElseGet(Collections::emptyList)
-                .stream()
-                .map(user -> modelMapper.map(user, ResponseUser.class))
-                .toList();
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
     }
 }

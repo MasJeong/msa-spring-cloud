@@ -1,5 +1,6 @@
 package com.example.userservice.user.controller;
 
+import com.example.userservice.user.domain.UserEntity;
 import com.example.userservice.user.dto.UserDto;
 import com.example.userservice.user.service.UserService;
 import com.example.userservice.user.vo.RequestUser;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -52,7 +54,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
-        List<ResponseUser> responseUsers = userService.getAllUsers();
+        List<UserEntity> userList = userService.getAllUsers();
+        List<ResponseUser> responseUsers = new ArrayList<>();
+
+        userList.forEach(user -> responseUsers.add(modelMapper.map(user, ResponseUser.class)));
 
         return ResponseEntity.status(HttpStatus.OK).body(responseUsers);
     }
