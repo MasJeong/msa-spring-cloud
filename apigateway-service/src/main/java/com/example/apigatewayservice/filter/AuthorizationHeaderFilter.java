@@ -46,7 +46,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
      */
     @Getter
     public static class Config {
-        private String tokenType = TOKEN_TYPE;
+        private final String tokenType = TOKEN_TYPE;
     }
 
     /**
