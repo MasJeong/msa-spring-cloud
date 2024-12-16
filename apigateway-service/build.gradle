@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // RabbitMQ와 Spring Cloud Bus를 통해 Connection
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     // Rate Limiter를 구현하기 위한 디펜던시
