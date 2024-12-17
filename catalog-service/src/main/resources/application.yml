@@ -4,6 +4,11 @@ server:
 logging:
   level:
     com.example.catalogservice: DEBUG
+    org.springframework: DEBUG
+    root: DEBUG
+    org.hibernate.SQL: DEBUG
+    # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
+    org.hibernate.orm.jdbc.bind: TRACE
 
 spring:
   application:

@@ -4,6 +4,8 @@ server:
 logging:
   level:
     com.example.discoveryservice: DEBUG
+    org.springframework: DEBUG
+    root: DEBUG
 
 spring:
   application:

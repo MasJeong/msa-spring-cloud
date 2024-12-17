@@ -1,3 +1,9 @@
+logging:
+  level:
+    com.example.configservice: DEBUG
+    org.springframework: DEBUG
+    root: DEBUG
+
 spring:
   application:
     name: config-service
