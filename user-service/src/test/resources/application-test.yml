@@ -1,0 +1,25 @@
+logging:
+  level:
+    com.example.userservice: DEBUG
+    org.springframework: DEBUG
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
+    org.hibernate.orm.jdbc.bind: TRACE
+
+token:
+  expiration-time: 1800000 # 1_800_000 30 minutes
+  secret: '{cipher}AQA8OxkaN8vESSfvMeakh1UP0HkrRez6i7vgOFAjgvCXtM1AQojoN1RUFZtUHIfXeBX4N5xDu6Y4v92kz/KZOZAXd3uijcXVyXNPq/V6y5HY6ia1LG+oJeFwPu/9b3MTtubWA+fivKlGlqluostYnT/G9j35NUHPiSyslMaAWbFQsffPJgsvfdYTB3mx7dOGt4nG4RdehaA4NvwGLWiRCwK6nLZnn20jdj8OoNJHakQJYomx0oZTMeQs5J6E96vVtdZ27h8pTONLoLC5eNXaeeMUAr1X+cvp/tvzl94CS743gtjoa8LNUjVMxj43ZeK7xIfu/sX3FM46KA3ptXhCr5DzPwNrmw6MHD0ZQAT+yPktSAh0+DzcznJnhDjxhbd18h89bxZZrFs6UErsFJxeQFK/MEnVlJ4p9D1VErYqKOTurfHOYpRUEK/uW0w7PZg7RmA='
+
+spring:
+  application:
+    name: user-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true # SQL 쿼리에 주석 추가
+        highlight_sql: true
