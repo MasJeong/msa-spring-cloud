@@ -65,10 +65,14 @@ class JwtTest {
                 .parseSignedClaims(token)
                 .getPayload();
 
+        String roleValue = String.valueOf(payload.get("ROLE"));
+
+        log.debug("== roleValue: {}", roleValue);
+
         // then
         assertNotNull(token);
         assertEquals(payload.getSubject(), username);
-        assertEquals(payload.get("ROLE"), roleName);
+        assertEquals(roleValue, roleName);
     }
 
 }
