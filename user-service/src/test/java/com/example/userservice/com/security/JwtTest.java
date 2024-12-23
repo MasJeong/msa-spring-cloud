@@ -1,5 +1,6 @@
 package com.example.userservice.com.security;
 
+import com.example.userservice.com.support.TestSupport;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -21,9 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
-@ActiveProfiles({"test"})
 @SpringBootTest
-class JwtTest {
+class JwtTest extends TestSupport {
 
     @Autowired
     private Environment env;
