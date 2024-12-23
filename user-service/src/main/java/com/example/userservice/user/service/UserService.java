@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * 사용자 정보 조회 - 로그인
+     *
      * @param username 사용자 아이디(email)
      * @return UserDetails
      */
@@ -53,6 +54,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * 사용자 정보 조회
+     *
      * @param email 사용자 이메일 (아이디)
      * @return 사용자 정보
      */
@@ -66,6 +68,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * 회원가입 - 사용자 신규 등록
+     *
      * @param userDto 사용자 등록 정보
      * @return 신규 사용자 정보
      */
@@ -83,6 +86,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * 사용자 및 주문 정보 조회
+     *
      * @param userId 사용자 아이디
      * @return 사용자 및 주문 정보
      */

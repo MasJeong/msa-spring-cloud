@@ -66,7 +66,6 @@ class JwtTest {
                 .getPayload();
 
         String roleValue = String.valueOf(payload.get("ROLE"));
-
         log.debug("== roleValue: {}", roleValue);
 
         // then
