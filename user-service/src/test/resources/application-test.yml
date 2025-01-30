@@ -2,7 +2,7 @@ logging:
   level:
     com.example.userservice: DEBUG
     org.springframework: DEBUG
-    root: INFO
+    root: DEBUG
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
     org.hibernate.orm.jdbc.bind: TRACE
@@ -14,9 +14,15 @@ token:
 spring:
   application:
     name: user-service
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:
