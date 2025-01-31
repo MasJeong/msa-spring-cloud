@@ -1,5 +1,7 @@
 package com.example.orderservice.order.controller;
 
+import com.example.orderservice.com.enums.KafkaTopics;
+import com.example.orderservice.com.msgqueue.KafkaProducer;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.service.OrderService;
 import com.example.orderservice.order.vo.RequestOrder;
@@ -17,9 +19,13 @@ import java.util.List;
 @RequestMapping("/order-service")
 public class OrderController {
 
+    /** 주문 서비스 */
     private final OrderService orderService;
 
+    /** 객체간 매핑 mapper */
     private final ModelMapper modelMapper;
+
+    private final KafkaProducer kafkaProducer;
 
     /**
      * 주문 목록 조회
@@ -50,6 +56,9 @@ public class OrderController {
         OrderDto createdOrderDto = orderService.createOrder(orderDto);
 
         ResponseOrder responseOrder = modelMapper.map(createdOrderDto, ResponseOrder.class);
+
+        /* send this order to the kafka */
+        kafkaProducer.send(KafkaTopics.CATALOG_STOCK_UPDATE.getTopicName(), orderDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }

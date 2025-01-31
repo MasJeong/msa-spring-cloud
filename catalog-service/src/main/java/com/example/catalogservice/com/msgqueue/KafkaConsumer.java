@@ -28,7 +28,7 @@ public class KafkaConsumer {
      */
     @KafkaListener(topics = "example-catalog-topic")
     public void processKafkaMessage(String kafkaMessage) {
-        log.info("Kafka Message: {}", kafkaMessage);
+        log.debug("Kafka Message: {}", kafkaMessage);
 
         Map<String, Object> messageMap = parseKafkaMessage(kafkaMessage);
 

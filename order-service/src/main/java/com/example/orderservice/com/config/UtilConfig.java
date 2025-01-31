@@ -1,4 +1,4 @@
-package com.example.orderservice.com;
+package com.example.orderservice.com.config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
