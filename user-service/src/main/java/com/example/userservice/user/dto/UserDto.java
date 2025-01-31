@@ -23,7 +23,7 @@ public class UserDto {
 
     private LocalDateTime createdAt;
 
-    private String encryptedPwd;
+    private String password;
 
     private List<ResponseOrder> orders;
 }

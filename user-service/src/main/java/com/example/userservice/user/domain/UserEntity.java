@@ -30,7 +30,7 @@ public class UserEntity {
 
     /** 사용자 패스워드 */
     @Column(nullable = false)
-    private String encryptedPwd;
+    private String password;
 
 //    /** 역할 연관관계 */
 //    @ManyToMany(fetch = FetchType.LAZY)

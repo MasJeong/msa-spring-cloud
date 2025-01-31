@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> opUserEntity = userRepository.findByEmail(username);
         UserEntity userEntity = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(username + ": not found"));
 
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(),
+        return new User(userEntity.getEmail(), userEntity.getPassword(),
                 true, true, true, true,
                 new ArrayList<>());
     }
@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
         userDto.setUserId(UUID.randomUUID().toString());
 
         UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-        userEntity.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
+        userEntity.setPassword(passwordEncoder.encode(userDto.getPwd()));
 
         userRepository.save(userEntity);
 
