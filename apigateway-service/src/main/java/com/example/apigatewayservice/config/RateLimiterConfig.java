@@ -47,6 +47,10 @@ public class RateLimiterConfig {
             String userId = String.valueOf(request.getHeaders().get("X-USER-ID"));
             log.debug("request userId : {}", userId);
 
+            // TODO X-USER-ID 헤더가 포함되어 반환되는지 확인한다.
+//            exchange.getResponse().getHeaders().remove("X-USER-ID");
+//            request.getHeaders().remove("X-USER-ID");
+
             return Mono.just(StringUtils.hasText(userId) ? userId : "Anonymous");
         };
     }
