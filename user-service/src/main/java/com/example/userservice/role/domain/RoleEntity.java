@@ -1,10 +1,7 @@
 package com.example.userservice.role.domain;
 
-import com.example.userservice.user.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -31,9 +28,9 @@ public class RoleEntity {
     @Column
     private String description;
 
-    /** 사용자 연관관계 */
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Set<UserEntity> users;
+//    /** 사용자 연관관계 */
+//    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+//    private Set<UserEntity> users;
 
     @Override
     public boolean equals(Object o) {

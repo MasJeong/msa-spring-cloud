@@ -1,11 +1,7 @@
 package com.example.userservice.user.domain;
 
-import com.example.userservice.role.domain.RoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -36,17 +32,17 @@ public class UserEntity {
     @Column(nullable = false)
     private String encryptedPwd;
 
-    /** 역할 연관관계 */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<RoleEntity> roles = new HashSet<>();
-
-    /**
-     * 역할 정보 세팅
-     * @param role 역할 엔티티
-     */
-    public void addRole(RoleEntity role) {
-        this.roles.add(role);
-    }
+//    /** 역할 연관관계 */
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @Builder.Default
+//    private Set<RoleEntity> roles = new HashSet<>();
+//
+//    /**
+//     * 역할 정보 세팅
+//     * @param role 역할 엔티티
+//     */
+//    public void addRole(RoleEntity role) {
+//        this.roles.add(role);
+//    }
 
 }
