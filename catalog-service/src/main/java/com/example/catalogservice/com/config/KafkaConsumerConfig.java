@@ -26,7 +26,7 @@ public class KafkaConsumerConfig {
         Map<String, Object> properties = new HashMap<>();
 
         // Kafka 브로커의 주소 설정
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9094");
         // 컨슈머 그룹 ID 설정
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "consumerGroupId");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
