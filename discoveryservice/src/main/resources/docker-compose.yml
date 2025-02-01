@@ -57,15 +57,15 @@ services:
     volumes:
       - C:/kafka/kafka-connect/docker-jars:/etc/kafka-connect/jars  # connect jar 파일 경로
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    depends_on:
-      - kafka
-    ports:
-      - "9091:8080"
-    restart: always
-    environment:
-      DYNAMIC_CONFIG_ENABLED: true # 동적 구성 허용
-      KAFKA_CLUSTERS_0_NAME: masjeong_kafka  # kafka 클러스터 이름 설정
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092  # kafka 클러스터에 연결할 부트스트랩 서버 설정
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    container_name: kafka-ui
+#    depends_on:
+#      - kafka
+#    ports:
+#      - "9091:8080"
+#    restart: always
+#    environment:
+#      DYNAMIC_CONFIG_ENABLED: true # 동적 구성 허용
+#      KAFKA_CLUSTERS_0_NAME: masjeong_kafka  # kafka 클러스터 이름 설정
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092  # kafka 클러스터에 연결할 부트스트랩 서버 설정
