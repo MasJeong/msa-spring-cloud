@@ -5,13 +5,18 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '1.0'
 description = 'user-service'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+// plain.jar 생성 비활성화
+jar {
+    enabled = false
 }
 
 configurations {

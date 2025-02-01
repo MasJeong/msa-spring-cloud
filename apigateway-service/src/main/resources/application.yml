@@ -4,8 +4,8 @@ server:
 logging:
   level:
     com.example.apigatewayservice: DEBUG
-    org.springframework: DEBUG
-    root: DEBUG
+    org.springframework: INFO
+    root: INFO
 
 spring:
   application:
