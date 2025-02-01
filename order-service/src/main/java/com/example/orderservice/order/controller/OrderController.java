@@ -2,6 +2,7 @@ package com.example.orderservice.order.controller;
 
 import com.example.orderservice.com.enums.KafkaTopics;
 import com.example.orderservice.com.msgqueue.KafkaProducer;
+import com.example.orderservice.com.msgqueue.OrderProducer;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.service.OrderService;
 import com.example.orderservice.order.vo.RequestOrder;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +26,9 @@ public class OrderController {
 
     /** 객체간 매핑 mapper */
     private final ModelMapper modelMapper;
+
+    /** 주문 producer */
+    private final OrderProducer orderProducer;
 
     private final KafkaProducer kafkaProducer;
 
@@ -42,23 +47,34 @@ public class OrderController {
 
     /**
      * 주문 저장
-     * @param requestOrder 저장할 요청 정보
+     * @param orderDetails 저장할 요청 정보
      * @param userId 사용자 아이디
      * @return 주문 결과 정보
      */
     @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable("userId") String userId,
-                                                    @RequestBody RequestOrder requestOrder) {
+                                                    @RequestBody RequestOrder orderDetails) {
 
-        OrderDto orderDto = modelMapper.map(requestOrder, OrderDto.class);
+        OrderDto orderDto = modelMapper.map(orderDetails, OrderDto.class);
         orderDto.setUserId(userId);
 
-        OrderDto createdOrderDto = orderService.createOrder(orderDto);
+        /* JPA */
+//        OrderDto createdOrderDto = orderService.createOrder(orderDto);
+//        ResponseOrder responseOrder = modelMapper.map(createdOrderDto, ResponseOrder.class);
 
-        ResponseOrder responseOrder = modelMapper.map(createdOrderDto, ResponseOrder.class);
+        orderDto.setOrderId(UUID.randomUUID().toString());
+        orderDto.setTotalPrice(orderDetails.getQty() * orderDetails.getUnitPrice());
 
-        /* send this order to the kafka */
+        /*
+        Kafka를 통해 주문 처리의 후속 단계인 재고 업데이트를 비동기적으로 수행하여
+        주문 프로세스의 응답 시간을 개선한다.
+         */
         kafkaProducer.send(KafkaTopics.CATALOG_STOCK_UPDATE.getTopicName(), orderDto);
+
+        /* 분산된 DB인 경우 kafka connect sink-connector를 사용하여 동기화  */
+        orderProducer.send(KafkaTopics.ORDER_INSERT.getTopicName(), orderDto);
+
+        ResponseOrder responseOrder = modelMapper.map(orderDto, ResponseOrder.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }
