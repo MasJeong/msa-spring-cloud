@@ -1,8 +1,11 @@
 logging:
   level:
     com.example.configservice: DEBUG
-    org.springframework: DEBUG
-    root: DEBUG
+    org.springframework: INFO
+    root: INFO
+
+server:
+  port: 8888
 
 spring:
   application:
@@ -23,15 +26,10 @@ spring:
         native:
           search-locations: file:///${user.home}\Desktop\study\springProject\MSA\MSA\native-file-repo
         # git repository에서 환경설정 정보를 가져온다.
-#        git:
-#          uri: https://github.com/MasJeong/spring-cloud-config
-          # private repository 인 경우 아이디와 비밀번호를 입력한다.
-#          username:
-#          password:
-#          uri: file://${user.home}\Desktop\study\springProject\MSA\MSA\git-local-repo
-
-server:
-  port: 8888
+        git:
+          uri: https://github.com/MasJeong/spring-cloud-config
+          username: "{cipher}AQDRA8DD5R7N4+0YY44IfSpkxDvQ1Fec5AqMuloH1k3xH+Cy3HRR984/xCeqyXPem3FFHoH6ECvRqMmgEsHpsF+JvoGZbXHPLxG1i2J8QDaF2jHAcHb+k1448DWLpC1Drx2pbrw3/RSVOxy0rr4UT2zvDqhXKOSXlKJtQkjLxJH4GZf73/2+sSld9Mzdnt9HAgrKI2rumygneaPN3GLkzZRB6vhEfP0XrdVfnqsC1K8l/zjP7DwGR7gnz2nlk+OX1aadxNuKdC9/IlQ4n1s2JfTys1nFejG2Q2ojnALWTpA1sBqvbQaudJyD/+jVWrERbV5DTCv0Y5XP3QnNxhxl16WAF7iDDmpTC3EvTwdDuZs9lI5Ey0bfTC5HvG6SZkcBfqk="
+          password: "{cipher}AQCHlfzuM+T57r9odtXDflixSfdn6wjI9lxm/jtdHNb2gRKQAH8h2LkrEnBzzPQ1rA9zniMLwwuV5+E7HAHY9zzzB3ooWFCKOMJOHMcNvXgtzZm6Ir8gkNUi8Sf+/0XzEQIGPT/Q+OhpMrRsa5nG4h4kIi8VM28rbAlQyu5Uhye+5RsCxEtJFzJzrawNq+z+nlcVOD3lcNc9lpd3DkoQtLzEKUAYK9+fm5nr1aAxK3yiLjd3xAbyZt2j4cxdwYXxTcyD2iVfw1WG78ijGH4yVHcNgSAwykmkHFmyFr53b6yT8bC0cjxDIjBb25jAklQMlA9kbKuN+/TZp2gTKW5dqdP4eN9maFyc/xJAkGgYNh39zvmIoOLRQikHDxv9oYnOIuE="
 
 # actuator 설정
 management:

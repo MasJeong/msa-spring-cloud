@@ -4,6 +4,7 @@ encrypt:
 #  key: jeongjihunabcdefghijklmnopqrstuvwxyz0123456789
   # 비대칭키 (keytool: JDK 명령줄 유틸리티 사용)
   key-store:
-    location: file:///${user.home}\Desktop\study\springProject\MSA\MSA\keystore\apiEncryptionKey.jks
-    password: test1234
+#    location: file:///${user.home}\Desktop\study\springProject\MSA\MSA\keystore\apiEncryptionKey.jks
+    location: file:///${user.home}\Desktop\study\springProject\MSA\MSA\config-service\apiEncryptionKey.jks
+    password: ${KEYSTORE_PASSWORD}
     alias: apiEncryptionKey
