@@ -4,8 +4,9 @@ server:
 logging:
   level:
     com.example.catalogservice: DEBUG
-    org.springframework: INFO
-    root: INFO
+    org.springframework: DEBUG
+    root: DEBUG
+    org.apache.kafka.clients: INFO
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
     org.hibernate.orm.jdbc.bind: TRACE
@@ -13,6 +14,11 @@ logging:
 spring:
   application:
     name: catalog-service
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
   datasource:
     url: jdbc:mariadb://127.0.0.1:3306/catalog_db
     username: catalog_user
