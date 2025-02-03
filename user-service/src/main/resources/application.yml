@@ -4,8 +4,10 @@ server:
 logging:
   level:
     com.example.userservice: DEBUG
+    org.springframework.security: TRACE
+    org.springframework.web: DEBUG
     org.springframework: DEBUG
-    root: DEBUG
+    root: INFO
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
     org.hibernate.orm.jdbc.bind: TRACE
@@ -15,7 +17,7 @@ spring:
     name: user-service
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:

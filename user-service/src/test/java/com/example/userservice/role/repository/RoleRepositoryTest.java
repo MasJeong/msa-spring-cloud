@@ -34,7 +34,7 @@ class RoleRepositoryTest extends TestSupport {
         // given
         RoleEntity roleEntity = RoleEntity.builder()
                 .roleId(UUID.randomUUID().toString())
-                .name("ADMIN")
+                .roleName("ADMIN")
                 .description("description")
                 .build();
 
@@ -51,7 +51,7 @@ class RoleRepositoryTest extends TestSupport {
         assertNotNull(findRoleEntity);
         assertEquals(roleEntity.getId(), findRoleEntity.getId());
         assertEquals(roleEntity.getRoleId(), findRoleEntity.getRoleId());
-        assertEquals(roleEntity.getName(), findRoleEntity.getName());
+        assertEquals(roleEntity.getRoleName(), findRoleEntity.getRoleName());
         assertEquals(roleEntity.getDescription(), findRoleEntity.getDescription());
     }
 

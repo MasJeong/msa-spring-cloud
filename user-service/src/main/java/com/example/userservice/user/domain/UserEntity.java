@@ -1,7 +1,13 @@
 package com.example.userservice.user.domain;
 
+import com.example.userservice.com.domain.BaseDomain;
+import com.example.userservice.role.domain.UserRoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.Persistable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,14 +16,15 @@ import lombok.*;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity {
+public class UserEntity extends BaseDomain implements Persistable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
     /** 사용자 ID */
-    @Column(nullable = false, unique = true)
+    @Column(name = "USER_ID", nullable = false, unique = true)
     private String userId;
 
     /** 사용자명 */
@@ -32,17 +39,12 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-//    /** 역할 연관관계 */
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @Builder.Default
-//    private Set<RoleEntity> roles = new HashSet<>();
-//
-//    /**
-//     * 역할 정보 세팅
-//     * @param role 역할 엔티티
-//     */
-//    public void addRole(RoleEntity role) {
-//        this.roles.add(role);
-//    }
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<UserRoleEntity> userRoles = new ArrayList<>();
 
+    @Override
+    public boolean isNew() {
+        return getCreatedAt() == null;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.userservice.user.service;
 
+import com.example.userservice.role.repository.RoleRepository;
 import com.example.userservice.user.client.OrderServiceClient;
 import com.example.userservice.user.domain.UserEntity;
 import com.example.userservice.user.dto.UserDto;
@@ -8,6 +9,7 @@ import com.example.userservice.user.vo.ResponseOrder;
 import com.example.userservice.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,9 @@ public class UserService implements UserDetailsService {
 //    private final RestTemplate restTemplate;
 
     private final OrderServiceClient orderServiceClient;
+
+    /** 역할 repository */
+    private final RoleRepository roleRepository;
 
     /**
      * 사용자 정보 조회 - 로그인
@@ -50,6 +56,14 @@ public class UserService implements UserDetailsService {
         return new User(userEntity.getEmail(), userEntity.getPassword(),
                 true, true, true, true,
                 new ArrayList<>());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimpleGrantedAuthority> getAuthorities(String userId) throws UsernameNotFoundException {
+        return roleRepository.findRoleNamesByUserId(userId)
+                .stream()
+                .map(roleName -> new SimpleGrantedAuthority("ROLE_" + roleName))
+                .collect(Collectors.toList());
     }
 
     /**

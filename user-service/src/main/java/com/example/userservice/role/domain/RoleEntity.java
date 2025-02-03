@@ -1,7 +1,12 @@
 package com.example.userservice.role.domain;
 
+import com.example.userservice.com.domain.BaseDomain;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.Persistable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,40 +15,31 @@ import lombok.*;
 @Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoleEntity {
+public class RoleEntity extends BaseDomain implements Persistable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
     /** 역할 ID */
-    @Column(nullable = false, unique = true)
+    @Column(name = "ROLE_ID", nullable = false, unique = true)
     private String roleId;
 
     /** 역할명 */
-    @Column(length = 20, unique = true, nullable = false)
-    private String name;
+    @Column(length = 20, nullable = false)
+    private String roleName;
 
     /** 역할설명 */
     @Column
     private String description;
 
-//    /** 사용자 연관관계 */
-//    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-//    private Set<UserEntity> users;
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<UserRoleEntity> userRoles = new ArrayList<>();
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RoleEntity role = (RoleEntity) o;
-
-        return roleId.equals(role.roleId);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
+    public boolean isNew() {
+        return getCreatedAt() == null;
     }
 }
