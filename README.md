@@ -1,7 +1,7 @@
 # MSA-Spring-Cloud
 
 ## 아키텍처 다이어그램(예정)
-![Image](https://github.com/user-attachments/assets/601972c0-5a4e-4184-a6db-e4a6a315ba30)
+<img width="781" alt="Image" src="https://github.com/user-attachments/assets/b12bacee-b58f-45db-9194-38f435f35408" />
 
 ### 구성 요소
 - **config-service**: Configuration service
