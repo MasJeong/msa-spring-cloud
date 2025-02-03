@@ -1,4 +1,4 @@
-# docker build -t masjeong/config-service:1.0 .
+# docker build -t masjeong/discovery-service:1.0 .
 
 # 1단계: 빌드 스테이지 (JDK 포함)
 FROM eclipse-temurin:17-jdk-alpine AS builder
@@ -10,7 +10,6 @@ COPY build.gradle settings.gradle gradlew ./
 RUN ./gradlew dependencies --no-daemon
 
 # 1.2 소스 코드 복사 및 빌드
-COPY src/main/resources/apiEncryptionKey.jks apiEncryptionKey.jks
 COPY src src
 RUN ./gradlew clean build -x test --no-daemon && \
     java -Djarmode=layertools -jar build/libs/*.jar extract

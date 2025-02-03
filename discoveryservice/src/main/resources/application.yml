@@ -3,13 +3,17 @@ server:
 
 logging:
   level:
-    com.example.discoveryservice: INFO
+    com.example.discoveryservice: DEBUG
     org.springframework: INFO
     root: INFO
 
 spring:
   application:
     name: discoveryservice
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: ecommerce
 
 eureka:
   client:
