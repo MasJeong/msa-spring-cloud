@@ -6,6 +6,9 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.100
     environment:
       ALLOW_ANONYMOUS_LOGIN: yes  # 익명 로그인 허용 (보안상 주의 필요)
 
@@ -17,7 +20,11 @@ services:
     ports:
       - "9092:9092"  # Kafka 브로커의 기본 포트
       - "9094:9094"  # 외부 접근용 추가 포트
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.101
     environment:
+      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
       KAFKA_BROKER_ID: 1  # 브로커 고유 식별자
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       ALLOW_PLAINTEXT_LISTENER: yes  # 암호화되지 않은 연결 허용 (보안상 주의 필요)
@@ -36,6 +43,9 @@ services:
       - kafka
     ports:
       - "8083:8083"
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.102
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka:9092
       CONNECT_REST_PORT: 8083  # REST API 포트 설정
@@ -56,6 +66,12 @@ services:
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/etc/kafka-connect/jars  # 커넥터 플러그인 경로
     volumes:
       - C:/kafka/kafka-connect/docker-jars:/etc/kafka-connect/jars  # connect jar 파일 경로
+
+networks:
+  my-network:
+    external: true
+    name: ecommerce-network
+
 
 #  kafka-ui:
 #    image: provectuslabs/kafka-ui:latest
