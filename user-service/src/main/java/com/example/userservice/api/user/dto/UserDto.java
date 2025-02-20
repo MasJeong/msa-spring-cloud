@@ -1,6 +1,6 @@
-package com.example.userservice.user.dto;
+package com.example.userservice.api.user.dto;
 
-import com.example.userservice.user.vo.ResponseOrder;
+import com.example.userservice.api.user.vo.ResponseOrder;
 import lombok.*;
 
 import java.time.LocalDateTime;

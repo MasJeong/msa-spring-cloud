@@ -1,6 +1,6 @@
-package com.example.userservice.role.repository;
+package com.example.userservice.api.role.repository;
 
-import com.example.userservice.role.domain.RoleEntity;
+import com.example.userservice.api.role.domain.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<RoleEntity, Long>, RoleDslRepository {

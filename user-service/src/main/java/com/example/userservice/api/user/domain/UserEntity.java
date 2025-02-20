@@ -1,7 +1,7 @@
-package com.example.userservice.user.domain;
+package com.example.userservice.api.user.domain;
 
 import com.example.userservice.com.domain.BaseDomain;
-import com.example.userservice.role.domain.UserRoleEntity;
+import com.example.userservice.api.role.domain.UserRoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;

@@ -1,4 +1,4 @@
-package com.example.userservice.user.vo;
+package com.example.userservice.api.user.vo;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

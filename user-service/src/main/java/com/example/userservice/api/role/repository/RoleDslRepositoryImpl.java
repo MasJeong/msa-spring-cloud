@@ -1,4 +1,4 @@
-package com.example.userservice.role.repository;
+package com.example.userservice.api.role.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

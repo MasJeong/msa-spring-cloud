@@ -1,12 +1,12 @@
-package com.example.userservice.user.service;
+package com.example.userservice.api.user.service;
 
-import com.example.userservice.role.repository.RoleRepository;
-import com.example.userservice.user.client.OrderServiceClient;
-import com.example.userservice.user.domain.UserEntity;
-import com.example.userservice.user.dto.UserDto;
-import com.example.userservice.user.repository.UserRepository;
-import com.example.userservice.user.vo.ResponseOrder;
-import com.example.userservice.user.vo.ResponseUser;
+import com.example.userservice.api.user.client.OrderServiceClient;
+import com.example.userservice.api.role.repository.RoleRepository;
+import com.example.userservice.api.user.domain.UserEntity;
+import com.example.userservice.api.user.dto.UserDto;
+import com.example.userservice.api.user.repository.UserRepository;
+import com.example.userservice.api.user.vo.ResponseOrder;
+import com.example.userservice.api.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

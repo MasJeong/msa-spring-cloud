@@ -1,6 +1,6 @@
 package com.example.userservice.com.config;
 
-import com.example.userservice.user.error.FeignErrorDecoder;
+import com.example.userservice.api.user.error.FeignErrorDecoder;
 import feign.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

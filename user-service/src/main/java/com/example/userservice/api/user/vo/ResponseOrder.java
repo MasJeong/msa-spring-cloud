@@ -1,4 +1,4 @@
-package com.example.userservice.user.vo;
+package com.example.userservice.api.user.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

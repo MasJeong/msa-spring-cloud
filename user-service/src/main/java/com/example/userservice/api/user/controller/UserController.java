@@ -1,10 +1,10 @@
-package com.example.userservice.user.controller;
+package com.example.userservice.api.user.controller;
 
-import com.example.userservice.user.domain.UserEntity;
-import com.example.userservice.user.dto.UserDto;
-import com.example.userservice.user.service.UserService;
-import com.example.userservice.user.vo.RequestUser;
-import com.example.userservice.user.vo.ResponseUser;
+import com.example.userservice.api.user.domain.UserEntity;
+import com.example.userservice.api.user.dto.UserDto;
+import com.example.userservice.api.user.service.UserService;
+import com.example.userservice.api.user.vo.RequestUser;
+import com.example.userservice.api.user.vo.ResponseUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -35,6 +38,10 @@ public class UserController {
      */
     @GetMapping("/health-check")
     public String healthCheck() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        log.debug("Current roles: {}", auth.getAuthorities());
+
         return String.format("It's working in User Service, " +
                         "port(local.server.port)=%s, " +
                         "port(server.port)=%s, " +
@@ -52,6 +59,8 @@ public class UserController {
      * @return 사용자 목록
      */
     @GetMapping
+//    @PreAuthorize("hasAnyRole('ROLE_COMPANY', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
         List<UserEntity> userList = userService.getAllUsers();

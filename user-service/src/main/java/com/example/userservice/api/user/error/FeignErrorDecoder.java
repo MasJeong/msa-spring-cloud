@@ -1,4 +1,4 @@
-package com.example.userservice.user.error;
+package com.example.userservice.api.user.error;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

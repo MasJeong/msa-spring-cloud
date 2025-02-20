@@ -1,4 +1,4 @@
-package com.example.userservice.role.domain;
+package com.example.userservice.api.role.domain;
 
 import com.example.userservice.com.domain.BaseDomain;
 import jakarta.persistence.*;

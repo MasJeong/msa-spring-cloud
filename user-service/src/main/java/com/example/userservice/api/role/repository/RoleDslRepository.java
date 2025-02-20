@@ -1,4 +1,4 @@
-package com.example.userservice.role.repository;
+package com.example.userservice.api.role.repository;
 
 import java.util.List;
 

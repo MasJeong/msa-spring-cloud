@@ -1,4 +1,4 @@
-package com.example.userservice.role.domain;
+package com.example.userservice.api.role.domain;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
