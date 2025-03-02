@@ -25,11 +25,63 @@ spring:
         # local file system에서 환경설정 정보를 가져온다.
         native:
           search-locations: file:///${user.home}\Desktop\study\springProject\MSA\MSA\native-file-repo
-        # git repository에서 환경설정 정보를 가져온다.
         git:
+#          uri: git@github.com:MasJeong/spring-cloud-config.git
+#          ignore-local-ssh-settings: true
+#          timeout: 5
+#          privateKey: |
+#            -----BEGIN OPENSSH PRIVATE KEY-----
+#            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
+#            NhAAAAAwEAAQAAAgEAjHMAtkB3WVVsdg1ld8NcXwBxr8FEjxnwEHxcP9CtetHIZIwOq2QE
+#            YcGEbdX0U9MSzKCSBiiZYZkAk8P6fHroScEOQyJJoLcPenAWfGQyahxZ0HGFmvquuB/KLn
+#            3f9/pBYuIIoCiX/mEIxqr6iwHyiyEKMiPESMFZcUtLOQwN8stdvCb/l1nKJ+wNBiPSZ5Y4
+#            tMj3EaEILborxXwoT+ymLMXW+Y63qAQlXuJ57Dju3hVt5s26WbjJh3Rs8/xUTDM0Wz6Ntg
+#            biH6VHSvvdGxmfkrCH/bvXsHADeBcRaioxoVDFTwLQ703wZRHyCAc4p7gMIioSZRkTlz7G
+#            H8q7Pe6CmTxmteJ1egtPnGxUbAEKW6ZNP+eVAPRG30ykJOwH7TttAQQyAV7wmMRBMXMk0S
+#            N7QujSkn4GyqMpFEMikHckLIThhj7Pnao2DmUTpPEex3OUArZ7Avgb45jicetypyRyq+g6
+#            c6KG9Z1yQhGfiau7evRbqao4vj2eRsUYMpqwpyoUJBc6xhq68gAm/bumoB7vwKAU5d4Lqb
+#            7inzvCKXq9Fi8dsunMkJSLWWGF7MGqkIzeQ7zJbDrOooKaBnvczWjlhyg0+Dm6//1K5201
+#            7/JSmbmyLn0Zz8YUNpq8vq6uURh/gMB8/UXmft3aW2k/nI2tj8VSR/jvyNXuY/n4faUf1I
+#            MAAAdAaPjnp2j456cAAAAHc3NoLXJzYQAAAgEAjHMAtkB3WVVsdg1ld8NcXwBxr8FEjxnw
+#            EHxcP9CtetHIZIwOq2QEYcGEbdX0U9MSzKCSBiiZYZkAk8P6fHroScEOQyJJoLcPenAWfG
+#            QyahxZ0HGFmvquuB/KLn3f9/pBYuIIoCiX/mEIxqr6iwHyiyEKMiPESMFZcUtLOQwN8std
+#            vCb/l1nKJ+wNBiPSZ5Y4tMj3EaEILborxXwoT+ymLMXW+Y63qAQlXuJ57Dju3hVt5s26Wb
+#            jJh3Rs8/xUTDM0Wz6NtgbiH6VHSvvdGxmfkrCH/bvXsHADeBcRaioxoVDFTwLQ703wZRHy
+#            CAc4p7gMIioSZRkTlz7GH8q7Pe6CmTxmteJ1egtPnGxUbAEKW6ZNP+eVAPRG30ykJOwH7T
+#            ttAQQyAV7wmMRBMXMk0SN7QujSkn4GyqMpFEMikHckLIThhj7Pnao2DmUTpPEex3OUArZ7
+#            Avgb45jicetypyRyq+g6c6KG9Z1yQhGfiau7evRbqao4vj2eRsUYMpqwpyoUJBc6xhq68g
+#            Am/bumoB7vwKAU5d4Lqb7inzvCKXq9Fi8dsunMkJSLWWGF7MGqkIzeQ7zJbDrOooKaBnvc
+#            zWjlhyg0+Dm6//1K52017/JSmbmyLn0Zz8YUNpq8vq6uURh/gMB8/UXmft3aW2k/nI2tj8
+#            VSR/jvyNXuY/n4faUf1IMAAAADAQABAAACABJ/s0BODWo+ziJecVbs7GW28UJs+lK+39fM
+#            CXp+Sds7dmGH8QayDcGyc3bkD2JbEsbQ/2rAPjOUq3bLAVsT9TSBsRc2lOwOMIO3775ClE
+#            FVqp7B1Q8spYaq6T5mZfGLjMExdGFj92ER9s30Bzv37bJVj7o668eJb/Z0LFw/MjcggiAe
+#            ItwUf4Pym2SLo1LxflaRgblYtHMRamKAj+63BMww4rfMDHSc1y9ANT7f4NZvjCIyRrE6nZ
+#            CxzQf13ESNGgBKpO+syGvSoSlHM0A2h8YSalcJPseGeW5/21NYa2EL+nEFte9PHLKzQmW8
+#            TcIJg8+cKwAV5XauVfoqAa+OkrTaP/YgLilJJAtcvgFmirZHbb0UVl+4Y17YzXrmkdWb/Q
+#            PlIFo/51Rri37CQcqtQPGrsMKwRtYKo1Cp3x6s2pj6NODIt6dOD+9BfKNEeYeI9b7ejyVG
+#            2S1HmbOPYagO6Akj7o43nR9xnSWy/MbChIBcXLIqGeqVEZkJOwh/1l88VwID+dA+fpgYIf
+#            JDSemM+CxrMKYTOAalxLGk4Zu3aglKzvYCWKYyQx5Gu56Rx+u4kznVEmSJd5NUeBUZcDDF
+#            tIXO9A+XLkXKmnq0Zxgf8svScUoHEUHGonB1bDgsf+7JAv8S8AkUc5bLUpAO6lMt3DVgz/
+#            +vmgVFphyTVo3QNhpBAAABAGox4lQIUiIoMHX6+ThnOz6STYQT+00cmruqzG2t82NBJHnP
+#            KFhLnA5V+lKPU1gXN1/zQepUQrVy31VSUfCUu/2OGZi0g2C3MMoXjCm82zZ1m4l2I8O8NI
+#            Mv6Uba7S6gEeRAivv3wPd15Ti+GhVdEGqYb2n3pL2yi+vzJb2ayCFylPmRp1UtNbLYJJ2k
+#            /jjGzkydalnqBuxrGsN8qIqO6PSnC/oTMgSe9g3JMPU3JcOiKAz04sh8swCPrvsc2qlROI
+#            8/gzoLEqNygotKVJXjgHWqzZU7hYlpUzX+4fJ4nXYWpRj+kujtkPq3FXQzbQoG28PcE4YE
+#            wj0gPi44nEDGSJEAAAEBAMKzLr59knZiNW0/Wpd72WBCp3xQDr9/SXKCA8udSU8JaKTdcL
+#            1PkOfkLAL3TK74U+e5kwiNgGm7OXHyYNtLyk8fsKeu07vbaQWRgr7XcvMvhfVJAUDY6n1H
+#            ElFkY3fyjKTgM3o3zIA6ct8oO9B5DbFl77m/4B4FSazTLGq5D1wW3BK2ERWG54sUPwSvT9
+#            GjLzilbL37Fj8fDPT4bbsDUFLotnr7j754yjzgIY9wq2ZiEEFeAa+uHONF0tMGahYbDaYi
+#            GtTWijrcK8n5QCxKNr6e47jYuzzLYPu9rNFmB2jzZQFRTaPFsOqQMG6PDrGSeZOXBpoASq
+#            ph+2NAIWMYJpcAAAEBALirNngRP2MuwGs7FYxPuuoamFuCCbs2aCzOvhIKbWs+WW+TOCCD
+#            uEtm6u6eiuOtbzkEpFJQiBrIY495e2m/D71LWsM+rrbbyw4DiOVD47sTWcARY4Zuvj7ASr
+#            DqN8tXUAUzRtrdTinkyjXzkygIsCRw6AC4yb/b84VJexHeeKTCQM+73N7NWb0jhOf0UrUq
+#            mV77LgmU6PoW3a1seUlmtkt5DfN7kyMkVmJHNVO5YEWY1nf5Ar9wVdBXAJqus1dhB0jW4c
+#            5MOyGQgNTFNlOWoPyVppMLb2inw5f6KJ6kuHTkXYc0WG1RlUc9BLyx6mJpSQ44gxpRVdil
+#            QSlAgvenCvUAAAAIbWFzamVvbmcBAgM=
+#            -----END OPENSSH PRIVATE KEY-----
           uri: https://github.com/MasJeong/spring-cloud-config
           username: "{cipher}AQDRA8DD5R7N4+0YY44IfSpkxDvQ1Fec5AqMuloH1k3xH+Cy3HRR984/xCeqyXPem3FFHoH6ECvRqMmgEsHpsF+JvoGZbXHPLxG1i2J8QDaF2jHAcHb+k1448DWLpC1Drx2pbrw3/RSVOxy0rr4UT2zvDqhXKOSXlKJtQkjLxJH4GZf73/2+sSld9Mzdnt9HAgrKI2rumygneaPN3GLkzZRB6vhEfP0XrdVfnqsC1K8l/zjP7DwGR7gnz2nlk+OX1aadxNuKdC9/IlQ4n1s2JfTys1nFejG2Q2ojnALWTpA1sBqvbQaudJyD/+jVWrERbV5DTCv0Y5XP3QnNxhxl16WAF7iDDmpTC3EvTwdDuZs9lI5Ey0bfTC5HvG6SZkcBfqk="
-          password: "{cipher}AQCHlfzuM+T57r9odtXDflixSfdn6wjI9lxm/jtdHNb2gRKQAH8h2LkrEnBzzPQ1rA9zniMLwwuV5+E7HAHY9zzzB3ooWFCKOMJOHMcNvXgtzZm6Ir8gkNUi8Sf+/0XzEQIGPT/Q+OhpMrRsa5nG4h4kIi8VM28rbAlQyu5Uhye+5RsCxEtJFzJzrawNq+z+nlcVOD3lcNc9lpd3DkoQtLzEKUAYK9+fm5nr1aAxK3yiLjd3xAbyZt2j4cxdwYXxTcyD2iVfw1WG78ijGH4yVHcNgSAwykmkHFmyFr53b6yT8bC0cjxDIjBb25jAklQMlA9kbKuN+/TZp2gTKW5dqdP4eN9maFyc/xJAkGgYNh39zvmIoOLRQikHDxv9oYnOIuE="
+          password: "{cipher}AQAyIDd3k01GwG9A+a0MWd3aYcJN/4ltCcgTSwXCSIjrFijr0carf+gpHTnoftudfKyAjeNxBDtukgBhjp08geXJNnb9ZecYQBZ6iOcZsVDXAIglw3nyGkvJu62Ngu0BWK5OS+5b2DYamibmcCX/YE2XtOIi+1VUPlEAr4YmWaX2eh95o8L6AFs6huMU17CrsFroZX+TTJZwSoCGlGvXTS4bGBQewxwJRhIRQZLv7hcK3ovbStCoCpNMgxjMk4oD6x+3EqdslSu/fCekebdYD+RTMrKGvCDwiQbOkhX6K+9J57HHLO6hCUJ0P5G3wzALxOlWEXgXSjhYxpW2Pz9y/NWgslB+xRe6DLlvw9IEw5n2hJMTjEdWT70AcGwdkpFd0BeUMCXizTDs0qZ1Jt0jZANb6dhmqPZDan6Erbsbz2wtEA=="
 
 # actuator 설정
 management:
