@@ -81,7 +81,7 @@ spring:
 #            -----END OPENSSH PRIVATE KEY-----
           uri: https://github.com/MasJeong/spring-cloud-config
           username: "{cipher}AQDRA8DD5R7N4+0YY44IfSpkxDvQ1Fec5AqMuloH1k3xH+Cy3HRR984/xCeqyXPem3FFHoH6ECvRqMmgEsHpsF+JvoGZbXHPLxG1i2J8QDaF2jHAcHb+k1448DWLpC1Drx2pbrw3/RSVOxy0rr4UT2zvDqhXKOSXlKJtQkjLxJH4GZf73/2+sSld9Mzdnt9HAgrKI2rumygneaPN3GLkzZRB6vhEfP0XrdVfnqsC1K8l/zjP7DwGR7gnz2nlk+OX1aadxNuKdC9/IlQ4n1s2JfTys1nFejG2Q2ojnALWTpA1sBqvbQaudJyD/+jVWrERbV5DTCv0Y5XP3QnNxhxl16WAF7iDDmpTC3EvTwdDuZs9lI5Ey0bfTC5HvG6SZkcBfqk="
-          password: "{cipher}AQAyIDd3k01GwG9A+a0MWd3aYcJN/4ltCcgTSwXCSIjrFijr0carf+gpHTnoftudfKyAjeNxBDtukgBhjp08geXJNnb9ZecYQBZ6iOcZsVDXAIglw3nyGkvJu62Ngu0BWK5OS+5b2DYamibmcCX/YE2XtOIi+1VUPlEAr4YmWaX2eh95o8L6AFs6huMU17CrsFroZX+TTJZwSoCGlGvXTS4bGBQewxwJRhIRQZLv7hcK3ovbStCoCpNMgxjMk4oD6x+3EqdslSu/fCekebdYD+RTMrKGvCDwiQbOkhX6K+9J57HHLO6hCUJ0P5G3wzALxOlWEXgXSjhYxpW2Pz9y/NWgslB+xRe6DLlvw9IEw5n2hJMTjEdWT70AcGwdkpFd0BeUMCXizTDs0qZ1Jt0jZANb6dhmqPZDan6Erbsbz2wtEA=="
+          password: "{cipher}AQCADK7tH/SAeFIHCox8p2JH08dTzPZXVg8nV5iCT1a5z+mkCAJCIiMVOWihyiRJijaUAzeMN9eR3MWnGYDvSYzVL3Vc9alhoEzEEnnf4zXA9s/1p0wtcXfVKuTBxQ5ZNWywE8scgRZvwsiK7S8Dl4rgZp9jC/3qk7uLHbR2EQoWkWtbiloBYEppeYg08cd2rwLc3O34vRIv4GVhhSZTukFCScO2vFU10BZMiMaqD0LodrHZOpU6OOeNakjUCEp03PhhB08aoEkyJbylw1UI/ChfGKd2ZblbgX12c+aO7yVzArz2PnnZRasrHL1Sv+bcZhrXeWGHAxPAdCgJSdNq8ZLOcCAgc/FqT4rQmtoXqrLLP6SfSbTB5jATKt115StzLrydWqQr0a+cewtENrCfkVW0MKzHX58qoVnTYjjM/JP8LA=="
 
 # actuator 설정
 management:
