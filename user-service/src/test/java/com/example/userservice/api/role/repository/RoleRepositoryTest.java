@@ -1,8 +1,9 @@
-package com.example.userservice.role.repository;
+package com.example.userservice.api.role.repository;
 
+import com.example.userservice.api.role.domain.Role;
 import com.example.userservice.com.support.TestSupport;
-import com.example.userservice.role.domain.RoleEntity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -32,27 +33,30 @@ class RoleRepositoryTest extends TestSupport {
     @DisplayName("역할 저장 및 상세 조회")
     void testSaveAndFindRole() {
         // given
-        RoleEntity roleEntity = RoleEntity.builder()
+        Role role = Role.builder()
                 .roleId(UUID.randomUUID().toString())
                 .roleName("ADMIN")
                 .description("description")
                 .build();
 
-        RoleEntity saveRole = roleRepository.save(roleEntity);
+        Role saveRole = roleRepository.save(role);
 
         em.flush();
         em.clear();
 
+        assert saveRole.getId() != null;
+
         // when
-        Optional<RoleEntity> opRole = roleRepository.findById(saveRole.getId());
-        RoleEntity findRoleEntity = opRole.orElseThrow(() -> new RuntimeException("Role not found"));
+        Optional<Role> opRole = roleRepository.findById(saveRole.getId());
+        Role findRole = opRole.orElseThrow(() ->
+                new EntityNotFoundException("Role not found with id: " + saveRole.getId()));
 
         // then
-        assertNotNull(findRoleEntity);
-        assertEquals(roleEntity.getId(), findRoleEntity.getId());
-        assertEquals(roleEntity.getRoleId(), findRoleEntity.getRoleId());
-        assertEquals(roleEntity.getRoleName(), findRoleEntity.getRoleName());
-        assertEquals(roleEntity.getDescription(), findRoleEntity.getDescription());
+        assertNotNull(findRole);
+        assertEquals(role.getId(), findRole.getId());
+        assertEquals(role.getRoleId(), findRole.getRoleId());
+        assertEquals(role.getRoleName(), findRole.getRoleName());
+        assertEquals(role.getDescription(), findRole.getDescription());
     }
 
 }

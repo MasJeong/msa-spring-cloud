@@ -1,13 +1,9 @@
 package com.example.userservice.api.user.domain;
 
 import com.example.userservice.com.domain.BaseDomain;
-import com.example.userservice.api.role.domain.UserRoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +12,7 @@ import java.util.List;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity extends BaseDomain implements Persistable<Long> {
+public class User extends BaseDomain implements Persistable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +35,9 @@ public class UserEntity extends BaseDomain implements Persistable<Long> {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<UserRoleEntity> userRoles = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    private List<UserRole> userRoles = new ArrayList<>();
 
     @Override
     public boolean isNew() {

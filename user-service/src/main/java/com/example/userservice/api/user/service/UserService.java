@@ -2,7 +2,7 @@ package com.example.userservice.api.user.service;
 
 import com.example.userservice.api.user.client.OrderServiceClient;
 import com.example.userservice.api.role.repository.RoleRepository;
-import com.example.userservice.api.user.domain.UserEntity;
+import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.repository.UserRepository;
 import com.example.userservice.api.user.vo.ResponseOrder;
@@ -10,7 +10,6 @@ import com.example.userservice.api.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,10 +49,10 @@ public class UserService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> opUserEntity = userRepository.findByEmail(username);
-        UserEntity userEntity = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(username + ": not found"));
+        Optional<User> opUserEntity = userRepository.findByEmail(username);
+        User user = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(username + ": not found"));
 
-        return new User(userEntity.getEmail(), userEntity.getPassword(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                 true, true, true, true,
                 new ArrayList<>());
     }
@@ -74,10 +73,10 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(readOnly = true)
     public UserDto getUserDetailsByEmail(String email) {
-        Optional<UserEntity> opUserEntity = userRepository.findByEmail(email);
-        UserEntity userEntity = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(email + ": not found"));
+        Optional<User> opUserEntity = userRepository.findByEmail(email);
+        User user = opUserEntity.orElseThrow(() -> new UsernameNotFoundException(email + ": not found"));
 
-        return modelMapper.map(userEntity, UserDto.class);
+        return modelMapper.map(user, UserDto.class);
     }
 
     /**
@@ -90,10 +89,10 @@ public class UserService implements UserDetailsService {
     public ResponseUser createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
 
-        UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-        userEntity.setPassword(passwordEncoder.encode(userDto.getPwd()));
+        User user = modelMapper.map(userDto, User.class);
+        user.setPassword(passwordEncoder.encode(userDto.getPwd()));
 
-        userRepository.save(userEntity);
+        userRepository.save(user);
 
         return modelMapper.map(userDto, ResponseUser.class);
     }
@@ -105,13 +104,13 @@ public class UserService implements UserDetailsService {
      * @return 사용자 및 주문 정보
      */
     public ResponseUser getUserByUserId(String userId) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
 
-        if (userEntity == null) {
+        if (user == null) {
             throw new UsernameNotFoundException("User not found. ");
         }
 
-        UserDto userDto = modelMapper.map(userEntity, UserDto.class);
+        UserDto userDto = modelMapper.map(user, UserDto.class);
 
         // FeignClient 사용하여 order service 요청
         List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
@@ -140,7 +139,7 @@ public class UserService implements UserDetailsService {
      * @return 모든 사용자 목록
      */
     @Transactional(readOnly = true)
-    public List<UserEntity> getAllUsers() {
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 }

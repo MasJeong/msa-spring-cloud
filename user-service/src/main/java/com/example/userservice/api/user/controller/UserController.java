@@ -1,6 +1,6 @@
 package com.example.userservice.api.user.controller;
 
-import com.example.userservice.api.user.domain.UserEntity;
+import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.service.UserService;
 import com.example.userservice.api.user.vo.RequestUser;
@@ -12,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -60,10 +59,10 @@ public class UserController {
      */
     @GetMapping
 //    @PreAuthorize("hasAnyRole('ROLE_COMPANY', 'ROLE_ADMIN')")
-    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
-        List<UserEntity> userList = userService.getAllUsers();
+        List<User> userList = userService.getAllUsers();
         List<ResponseUser> responseUsers = new ArrayList<>();
 
         userList.forEach(user -> responseUsers.add(modelMapper.map(user, ResponseUser.class)));

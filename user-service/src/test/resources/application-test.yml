@@ -1,8 +1,8 @@
 logging:
   level:
     com.example.userservice: DEBUG
-    org.springframework: DEBUG
-    root: DEBUG
+    org.springframework: INFO
+    root: INFO
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
     org.hibernate.orm.jdbc.bind: TRACE
@@ -15,17 +15,19 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mariadb://127.0.0.1:3306/user_db
+    username: webuser
+    password: '{cipher}AQC4+hvSAtXZAj2vtRJ4HFf/bvQpp4+6bzdeBxkcd3rO+2dSgJF8r1wxoxAaCmoDe5IYBnop3VKtdIkmtjlNLKWencMyQvuSYcttRlZbfnY2ebQKp+aru78TKoQ5DiQhBKZnN+1askNB+jEMALtFK+yGglrKOmPkJdmeTmYvw7klM/iG5xyjjyHPKyB7MD97sl4oVPHIkA1ALvfFfX7nnM17tdz8p618Xn5Ai/G79kz6/zdcZOUoXqi27GxxC3/cPVURZopaE3dQLd4RNIaFZ9UG8/rHNKiILwy25QcG4P5nkOLFWy3Gb4qB3JFuDp/buwLQ6tHJRyLR71kjAIKN2mWFb7ekSk78DnP/O9KUPu6TLGMNuakyc11P9DjSYoGYtOk='
+    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true # SQL 쿼리에 주석 추가
         highlight_sql: true
+  h2:
+    console:
+      enabled: true

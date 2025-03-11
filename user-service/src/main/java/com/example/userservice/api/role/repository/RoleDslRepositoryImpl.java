@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.example.userservice.role.domain.QRoleEntity.roleEntity;
-import static com.example.userservice.role.domain.QUserRoleEntity.userRoleEntity;
+import static com.example.userservice.api.role.domain.QRole.role;
+import static com.example.userservice.api.role.domain.QUserRole.userRole;
 
 @RequiredArgsConstructor
 public class RoleDslRepositoryImpl implements RoleDslRepository {
@@ -21,10 +21,10 @@ public class RoleDslRepositoryImpl implements RoleDslRepository {
     @Override
     public List<String> findRoleNamesByUserId(String userId) {
         return queryFactory
-                .select(roleEntity.roleName)
-                .from(userRoleEntity)
-                .join(roleEntity).on(roleEntity.roleId.eq(userRoleEntity.role.roleId))
-                .where(userRoleEntity.user.userId.eq(userId))
+                .select(role.roleName)
+                .from(userRole)
+                .leftJoin(role).on(role.roleId.eq(userRole.role.roleId))
+                .where(userRole.user.userId.eq(userId))
                 .fetch();
     }
 }
