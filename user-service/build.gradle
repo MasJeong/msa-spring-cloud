@@ -50,6 +50,10 @@ dependencies {
     // RabbitMQ와 Spring Cloud Bus를 통해 Connection
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
+    // resilience4j-circuitbreaker
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
     // QueryDSL
     implementation 'com.querydsl:querydsl-core:5.1.0'
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
