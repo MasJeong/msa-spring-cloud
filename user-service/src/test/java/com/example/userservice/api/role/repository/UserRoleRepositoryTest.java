@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -74,6 +76,39 @@ public class UserRoleRepositoryTest extends TestSupport {
         // then
         assertThat(findUserRole).isNotNull();
         assertThat(findUserRole.getId()).isEqualTo(userRole.getId());
+    }
+
+    @Test
+    @DisplayName("사용자 역할 제약조건 테스트")
+    public void testUniqueConstraintViolation() {
+        // given
+        User saveUser = userRepository.save(User.builder()
+                .userId(UUID.randomUUID().toString())
+                .name("name")
+                .email("email")
+                .password("password")
+                .build());
+
+        Role saveRole = roleRepository.save(Role.builder()
+                .roleId(UUID.randomUUID().toString())
+                .roleName("ADMIN")
+                .description("description")
+                .build());
+
+        UserRole userRole = UserRole.builder()
+                .roleId(saveRole.getRoleId())
+                .userId(saveUser.getUserId())
+                .build();
+
+        userRoleRepository.save(userRole);
+
+        UserRole secondUserRole = UserRole.builder()
+                .userId(userRole.getUserId())
+                .roleId(userRole.getRoleId())
+                .build();
+
+        // when then
+        assertThrows(DataIntegrityViolationException.class, () -> userRoleRepository.saveAndFlush(secondUserRole));
     }
 
 //    @Test
