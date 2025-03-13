@@ -1,9 +1,13 @@
 package com.example.userservice.api.user.domain;
 
+import com.example.userservice.api.role.domain.UserRole;
 import com.example.userservice.com.domain.BaseDomain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,9 +39,9 @@ public class User extends BaseDomain implements Persistable<Long> {
     @Column(nullable = false)
     private String password;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    @Builder.Default
-//    private List<UserRole> userRoles = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<UserRole> userRoles = new ArrayList<>();
 
     @Override
     public boolean isNew() {

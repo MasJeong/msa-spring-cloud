@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -31,9 +34,9 @@ public class Role extends BaseDomain implements Persistable<Long> {
     @Column(name = "DESCRIPTION")
     private String description;
 
-//    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-//    @Builder.Default
-//    private List<UserRole> userRoles = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<UserRole> userRoles = new ArrayList<>();
 
     @Override
     public boolean isNew() {

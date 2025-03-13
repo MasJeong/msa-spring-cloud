@@ -23,8 +23,8 @@ public class RoleDslRepositoryImpl implements RoleDslRepository {
         return queryFactory
                 .select(role.roleName)
                 .from(userRole)
-                .leftJoin(role).on(role.roleId.eq(userRole.role.roleId))
-                .where(userRole.user.userId.eq(userId))
+                .leftJoin(role).on(role.roleId.eq(userRole.roleId))
+                .where(userRole.userId.eq(userId))
                 .fetch();
     }
 }

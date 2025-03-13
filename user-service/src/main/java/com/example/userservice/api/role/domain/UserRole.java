@@ -12,7 +12,12 @@ import org.springframework.data.domain.Persistable;
 @Entity
 @Builder
 @AllArgsConstructor
-@Table(name = "user_roles")
+@Table(name = "user_roles", uniqueConstraints={
+        @UniqueConstraint(
+                name="UK_USER_ROLE",
+                columnNames={"role_id", "user_id"}
+        )
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRole extends BaseDomain implements Persistable<Long> {
 
@@ -25,9 +30,6 @@ public class UserRole extends BaseDomain implements Persistable<Long> {
     @NotNull
     @Column(name = "role_id", nullable = false)
     private String roleId;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Role role;
 
     @Size(max = 36)
     @NotNull
