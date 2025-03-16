@@ -4,9 +4,9 @@ server:
 logging:
   level:
     com.example.userservice: DEBUG
-    org.springframework.security: TRACE
-    org.springframework.web: DEBUG
-    org.springframework: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    org.springframework: INFO
     root: INFO
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정

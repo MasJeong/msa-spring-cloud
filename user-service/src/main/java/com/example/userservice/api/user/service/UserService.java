@@ -1,7 +1,7 @@
 package com.example.userservice.api.user.service;
 
-import com.example.userservice.api.user.client.OrderServiceClient;
 import com.example.userservice.api.role.repository.RoleRepository;
+import com.example.userservice.api.user.client.OrderServiceClient;
 import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.repository.UserRepository;
@@ -35,6 +35,7 @@ public class UserService implements UserDetailsService {
 
 //    private final RestTemplate restTemplate;
 
+    /** 주문 service FeignClient */
     private final OrderServiceClient orderServiceClient;
 
     /** 역할 repository */
@@ -57,6 +58,12 @@ public class UserService implements UserDetailsService {
                 new ArrayList<>());
     }
 
+    /**
+     * 사용자 역할 목록 조회
+     *
+     * @param userId 사용자 ID
+     * @return 사용자 역할 목록
+     */
     @Transactional(readOnly = true)
     public List<SimpleGrantedAuthority> getAuthorities(String userId) throws UsernameNotFoundException {
         return roleRepository.findRoleNamesByUserId(userId)

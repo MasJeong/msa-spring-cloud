@@ -12,8 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -33,14 +32,14 @@ public class UserController {
 
     /**
      * User Service 상태 체크
+     *
      * @return 환경 정보
      */
     @GetMapping("/health-check")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
+    // TODO 아래 주석 테스트 필요
+//    @RequireAdminOrCompanyRole
     public String healthCheck() {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        log.debug("Current roles: {}", auth.getAuthorities());
-
         return String.format("It's working in User Service, " +
                         "port(local.server.port)=%s, " +
                         "port(server.port)=%s, " +
@@ -55,11 +54,11 @@ public class UserController {
 
     /**
      * 사용자 전체 목록 조회
+     *
      * @return 사용자 목록
      */
     @GetMapping
-//    @PreAuthorize("hasAnyRole('ROLE_COMPANY', 'ROLE_ADMIN')")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ResponseUser>> getUsers() {
 
         List<User> userList = userService.getAllUsers();
@@ -72,6 +71,7 @@ public class UserController {
 
     /**
      * 사용자 상세정보 조회
+     *
      * @param userId 사용자 아이디
      * @return 사용자 상세정보
      */
@@ -85,6 +85,7 @@ public class UserController {
 
     /**
      * 사용자 정보 저장
+     *
      * @param requestUser 저장할 요청 정보
      * @return responseUser
      */

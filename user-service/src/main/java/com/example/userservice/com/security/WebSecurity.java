@@ -1,6 +1,6 @@
 package com.example.userservice.com.security;
 
-import com.example.userservice.user.service.UserService;
+import com.example.userservice.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,10 +17,12 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurity {
 
@@ -27,6 +30,7 @@ public class WebSecurity {
 
     /**
      * Spring Security 필터 체인 설정
+     *
      * @param http 보안 설정 구성하는 데 사용
      * @param authenticationManager 인증 매니저 - 사용자 인증 처리에 사용
      * @param customAuthenticationFilter 사용자 인증 커스텀 필터
@@ -35,7 +39,8 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            AuthenticationManager authenticationManager,
-                                           CustomAuthenticationFilter customAuthenticationFilter) throws Exception {
+                                           CustomAuthenticationFilter customAuthenticationFilter,
+                                           UserService userService) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
@@ -60,6 +65,8 @@ public class WebSecurity {
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 응답 헤더에 X-Frame-Options 추가 - 클릭재킹 공격 방어 - 동일 출처만 <iframe> 로드 가능.
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .addFilterBefore(new CustomJwtValidationFilter(env, userService),
+                        UsernamePasswordAuthenticationFilter.class)
                 .addFilter(customAuthenticationFilter);
 
         return http.build();
@@ -67,6 +74,7 @@ public class WebSecurity {
 
     /**
      * authenticationManager bean 생성
+     *
      * @param http HttpSecurity
      * @return authenticationManager bean
      */
@@ -82,6 +90,7 @@ public class WebSecurity {
 
     /**
      * customAuthenticationFilter bean 생성
+     *
      * @return customAuthenticationFilter bean
      */
     @Bean
@@ -92,6 +101,7 @@ public class WebSecurity {
 
     /**
      * 비밀번호 암호화 모듈
+     *
      * @return 암호화 bean
      */
     @Bean

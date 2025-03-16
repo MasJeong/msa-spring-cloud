@@ -1,8 +1,8 @@
 package com.example.userservice.com.security;
 
-import com.example.userservice.user.dto.UserDto;
-import com.example.userservice.user.service.UserService;
-import com.example.userservice.user.vo.RequestLogin;
+import com.example.userservice.api.user.dto.UserDto;
+import com.example.userservice.api.user.service.UserService;
+import com.example.userservice.api.user.vo.RequestLogin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -15,6 +15,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,6 +27,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -78,10 +81,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
      * @param auth auth
      */
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication auth) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain chain, Authentication auth) {
 
         String userName = ((User) auth.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserDetailsByEmail(userName);
@@ -98,14 +99,19 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Instant now = Instant.now();
 
+        List<SimpleGrantedAuthority> authorities = userService.getAuthorities(userDetails.getUserId());
+
         String token = Jwts.builder()
-                .subject(userDetails.getUserId())
-                .expiration(Date.from(now.plusMillis(Long.parseLong(expireTime))))  // 만료 시간
-                .issuedAt(Date.from(now))   // 발급 시간
-                .signWith(secretKey)        // 서명
+                .subject(userDetails.getEmail())
+                .claim("roles", authorities)
+                .expiration(Date.from(now.plusMillis(Long.parseLong(expireTime))))
+                .issuedAt(Date.from(now))
+                .signWith(secretKey)
                 .compact();
 
         response.addHeader(HttpHeaders.AUTHORIZATION, token);
         response.addHeader("userId", userDetails.getUserId());
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
