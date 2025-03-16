@@ -68,15 +68,15 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             String authorizationHeader = headers.get(0);
 
-            String jwt = authorizationHeader.replace(config.getTokenType(), "");
+            String token = authorizationHeader.replace(config.getTokenType(), "");
 
-            if (!isJwtValid(jwt)) {
+            Claims claims = getClaims(token);
+
+            if (!isJwtValid(token, claims)) {
                 return onError(exchange, "JWT is not valid");
             }
 
-            Claims claims = getClaims(jwt);
             assert claims != null;
-
             String userId = String.valueOf(claims.get("sub"));
 
             ServerHttpRequest newRequest = request.mutate()
@@ -90,13 +90,12 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
     /**
      * jwt 유효성 검사
-     * @param token 토큰 값
+     * @param token JWT
+     * @param claims JWT 클레임
      * @return jwt 유효 여부 (유효하면 true, 유효하지 않으면 false)
      */
-    private boolean isJwtValid(String token) {
+    private boolean isJwtValid(String token, Claims claims) {
         if(StringUtils.isEmpty(token)) return false;
-
-        Claims claims = getClaims(token);
 
         if (claims == null) return false;
 
