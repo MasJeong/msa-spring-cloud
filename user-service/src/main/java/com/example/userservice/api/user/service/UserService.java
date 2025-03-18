@@ -129,7 +129,7 @@ public class UserService implements UserDetailsService {
 //        userDto.setOrders(orders);
 
         // 서킷 브레이커 패턴 적용
-        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("cb-userToOrder");
         List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
                 throwable -> new ArrayList<>());
 
