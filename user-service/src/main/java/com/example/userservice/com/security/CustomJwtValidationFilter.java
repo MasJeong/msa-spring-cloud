@@ -1,5 +1,6 @@
 package com.example.userservice.com.security;
 
+import com.example.userservice.com.security.constants.JwtConstant;
 import com.google.common.net.HttpHeaders;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -46,7 +47,7 @@ public class CustomJwtValidationFilter extends OncePerRequestFilter {
 
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (header != null && header.startsWith("Bearer ")) {
+        if (header != null && header.startsWith(JwtConstant.TOKEN_PREFIX)) {
             String token = header.substring(7);
 
             try {
