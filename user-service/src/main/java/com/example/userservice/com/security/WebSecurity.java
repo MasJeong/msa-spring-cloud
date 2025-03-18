@@ -44,9 +44,8 @@ public class WebSecurity {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/actuator/**").permitAll()
-                                .requestMatchers("/health-check/**").permitAll()
-                                .requestMatchers("/error/**").permitAll()
+                        authorize.requestMatchers("/actuator/**", "/health-check/**").permitAll()
+                                .requestMatchers("/error/**", "/login").permitAll()
                                 .requestMatchers("/**").access((authentication, request) -> {
                                     String clientIp = request.getRequest().getRemoteAddr();
                                     log.debug("client ip is = {}", clientIp);
@@ -65,9 +64,8 @@ public class WebSecurity {
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 응답 헤더에 X-Frame-Options 추가 - 클릭재킹 공격 방어 - 동일 출처만 <iframe> 로드 가능.
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .addFilterBefore(new CustomJwtValidationFilter(env, userService),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilter(customAuthenticationFilter);
+                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomJwtValidationFilter(env, userService), CustomAuthenticationFilter.class);
 
         return http.build();
     }
