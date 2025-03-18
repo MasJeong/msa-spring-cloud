@@ -26,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,9 @@ public class CustomJwtValidationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userService;
 
+    /** JWT 인증을 제외할 요청 목록 */
+    private final List<String> excludePaths = Arrays.asList("/login", "/health-check", "/actuator", "/error");
+
     public CustomJwtValidationFilter(Environment env, UserDetailsService userService) {
         this.env = env;
         this.userService = userService;
@@ -49,6 +53,11 @@ public class CustomJwtValidationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain chain) throws IOException, ServletException {
+
+        if(isExcludePath(request.getServletPath())) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -100,7 +109,19 @@ public class CustomJwtValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-
         chain.doFilter(request, response);
+    }
+
+    /**
+     * JWT 인증 제외 여부를 확인한다.
+     *
+     * @param servletPath 요청 Path
+     * @return JWT 인증 제외 여부
+     */
+    private boolean isExcludePath(String servletPath) {
+        if(!StringUtils.hasText(servletPath)) return false;
+
+        return excludePaths.stream()
+                .anyMatch(servletPath::startsWith);
     }
 }
