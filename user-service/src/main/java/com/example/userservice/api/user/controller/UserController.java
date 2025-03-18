@@ -36,9 +36,6 @@ public class UserController {
      * @return 환경 정보
      */
     @GetMapping("/health-check")
-    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
-    // TODO 아래 주석 테스트 필요
-//    @RequireAdminOrCompanyRole
     public String healthCheck() {
         return String.format("It's working in User Service, " +
                         "port(local.server.port)=%s, " +
@@ -90,6 +87,7 @@ public class UserController {
      * @return responseUser
      */
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestUser requestUser) {
 
         UserDto userDto = modelMapper.map(requestUser, UserDto.class);
