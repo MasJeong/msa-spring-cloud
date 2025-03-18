@@ -9,6 +9,8 @@ import com.example.userservice.api.user.vo.ResponseOrder;
 import com.example.userservice.api.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,6 +42,9 @@ public class UserService implements UserDetailsService {
 
     /** 역할 repository */
     private final RoleRepository roleRepository;
+
+    /** 서킷브레이커 */
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     /**
      * 사용자 정보 조회 - 로그인
@@ -120,7 +125,14 @@ public class UserService implements UserDetailsService {
         UserDto userDto = modelMapper.map(user, UserDto.class);
 
         // FeignClient 사용하여 order service 요청
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+//        userDto.setOrders(orders);
+
+        // 서킷 브레이커 패턴 적용
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+        List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
+                throwable -> new ArrayList<>());
+
         userDto.setOrders(orders);
 
         // RestTemplate 사용하여 order service 요청
