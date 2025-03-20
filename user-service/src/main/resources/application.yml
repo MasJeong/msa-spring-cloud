@@ -6,7 +6,7 @@ logging:
     com.example.userservice: DEBUG
     org.springframework.security: DEBUG
     org.springframework.web: INFO
-    org.springframework: INFO
+    org.springframework: DEBUG
     root: INFO
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
@@ -24,7 +24,6 @@ spring:
         format_sql: true
         use_sql_comments: true # SQL 쿼리에 주석 추가
         highlight_sql: true
-
   # RabbitMQ 설정 정보
   rabbitmq:
     host: 127.0.0.1
@@ -55,3 +54,13 @@ management:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
+  # Micrometer 및 zipkin 설정
+  tracing:
+    sampling:
+      probability: 1.0  # 추적할 요청의 비율 설정 (1.0은 모든 요청 추적)
+    propagation:
+      consume: B3
+      produce: B3
+    zipkin:
+      tracing:
+        endpoint: http://127.0.0.1:9411/api/v2/spans
