@@ -47,7 +47,7 @@ public class Resilience4JConfig {
                 느린 호출율: slowCall 발생 시 서버 스레드 점유로 인해 장애가 생길 수 있으므로 기본값(100)보다 작게 설정
                 너무 낮으면 일시적인 문제에도 과민반응할 수 있고, 너무 높으면 심각한 문제를 늦게 감지함
                  */
-                .slowCallRateThreshold(50)
+                .slowCallRateThreshold(30)
                 /*
                  느린 호출 기준 시간 5초
                  해당 값은 TimeLimiter의 timeoutDuration보다 작아야 함
@@ -65,13 +65,13 @@ public class Resilience4JConfig {
                 마지막 N초의 결과를 기반으로 하는 time-based sliding window(시간 기반 슬라이딩 윈도우)
                  */
                 .slidingWindowType(CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
-                .slidingWindowSize(100)
+                .slidingWindowSize(20)
                 /*
                 HALF-OPEN 상태에서 10개의 호출을 허용
                 10개의 호출이라면 시스템 회복 여부를 판단하기 괜찮을 것 같다.
                  */
                 .permittedNumberOfCallsInHalfOpenState(10)
-                .minimumNumberOfCalls(100) // 최소 100번(기본값) 호출 후에 실패율을 계산
+                .minimumNumberOfCalls(20) // 최소 20번 호출 후에 실패율을 계산
                 .recordExceptions(IOException.class, TimeoutException.class) // 해당 예외들을 실패로 기록한다.
 //                .ignoreExceptions()
                 .build();
