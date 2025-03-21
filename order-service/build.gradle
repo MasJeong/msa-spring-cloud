@@ -44,9 +44,11 @@ dependencies {
     Spring Cloud Sleuth에서 Micrometer로 대체됨
     Micrometer + zipkin (분산추적 모니터링) 연동
      */
+    implementation 'io.github.openfeign:feign-micrometer'
     implementation 'io.micrometer:micrometer-observation'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
-    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+//    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
