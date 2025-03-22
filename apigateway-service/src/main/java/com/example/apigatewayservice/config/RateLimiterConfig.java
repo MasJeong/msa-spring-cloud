@@ -43,7 +43,6 @@ public class RateLimiterConfig {
     public KeyResolver userKeyResolver() {
         return exchange -> {
             ServerHttpRequest request = exchange.getRequest();
-
             String userId = String.valueOf(request.getHeaders().get("X-USER-ID"));
 
             return Mono.just(StringUtils.hasText(userId) ? userId : "Anonymous");
