@@ -8,6 +8,7 @@ import com.example.userservice.api.user.repository.UserRepository;
 import com.example.userservice.api.user.vo.ResponseOrder;
 import com.example.userservice.api.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -128,10 +130,13 @@ public class UserService implements UserDetailsService {
 //        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
 //        userDto.setOrders(orders);
 
+        log.info("before call orders microservice");
+
         // 서킷 브레이커 패턴 적용
         CircuitBreaker circuitbreaker = circuitBreakerFactory.create("cb-userToOrder");
         List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
                 throwable -> new ArrayList<>());
+        log.info("after called orders microservice");
 
         userDto.setOrders(orders);
 
