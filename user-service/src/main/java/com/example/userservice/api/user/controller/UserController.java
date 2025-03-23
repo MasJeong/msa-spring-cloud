@@ -7,6 +7,7 @@ import com.example.userservice.api.user.service.UserService;
 import com.example.userservice.api.user.vo.RequestUser;
 import com.example.userservice.api.user.vo.ResponseOrder;
 import com.example.userservice.api.user.vo.ResponseUser;
+import io.micrometer.core.annotation.Timed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class UserController {
      * @return 환경 정보
      */
     @GetMapping("/health-check")
+    @Timed(value = "users.healthCheck", longTask = true)
     public String healthCheck() {
         return String.format("It's working in User Service, " +
                         "port(local.server.port)=%s, " +
@@ -86,10 +88,6 @@ public class UserController {
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
 
         UserDto userDto = userService.getUserByUserId(userId);
-
-        // FeignClient 사용하여 order service 요청
-//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
-//        userDto.setOrders(orders);
 
         log.info("before call orders microservice");
 
