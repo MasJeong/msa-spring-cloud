@@ -1,17 +1,13 @@
 package com.example.userservice.api.user.service;
 
 import com.example.userservice.api.role.repository.RoleRepository;
-import com.example.userservice.api.user.client.OrderServiceClient;
 import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.repository.UserRepository;
-import com.example.userservice.api.user.vo.ResponseOrder;
 import com.example.userservice.api.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,14 +35,8 @@ public class UserService implements UserDetailsService {
 
 //    private final RestTemplate restTemplate;
 
-    /** 주문 service FeignClient */
-    private final OrderServiceClient orderServiceClient;
-
     /** 역할 repository */
     private final RoleRepository roleRepository;
-
-    /** 서킷브레이커 */
-    private final CircuitBreakerFactory circuitBreakerFactory;
 
     /**
      * 사용자 정보 조회 - 로그인
@@ -117,44 +107,14 @@ public class UserService implements UserDetailsService {
      * @param userId 사용자 아이디
      * @return 사용자 및 주문 정보
      */
-    public ResponseUser getUserByUserId(String userId) {
+    public UserDto getUserByUserId(String userId) {
         User user = userRepository.findByUserId(userId);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found. ");
         }
 
-        UserDto userDto = modelMapper.map(user, UserDto.class);
-
-        // FeignClient 사용하여 order service 요청
-//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
-//        userDto.setOrders(orders);
-
-        log.info("before call orders microservice");
-
-        // 서킷 브레이커 패턴 적용
-        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("cb-userToOrder");
-        List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
-                throwable -> new ArrayList<>());
-        log.info("after called orders microservice");
-
-        userDto.setOrders(orders);
-
-        // RestTemplate 사용하여 order service 요청
-//        Optional.ofNullable(env.getProperty("order_service.url")).ifPresent(orderServiceUrl -> {
-//            String requestOrderUrl = String.format(orderServiceUrl, userId);
-//
-//            ResponseEntity<List<ResponseOrder>> orderListResponse =
-//                    restTemplate.exchange(requestOrderUrl,
-//                            HttpMethod.GET,
-//                            null,
-//                            new ParameterizedTypeReference<>() {});
-//
-//            List<ResponseOrder> orders = orderListResponse.getBody();
-//            userDto.setOrders(orders);
-//        });
-
-        return modelMapper.map(userDto, ResponseUser.class);
+        return modelMapper.map(user, UserDto.class);
     }
 
     /**

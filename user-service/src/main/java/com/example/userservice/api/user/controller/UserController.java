@@ -1,14 +1,18 @@
 package com.example.userservice.api.user.controller;
 
+import com.example.userservice.api.user.client.OrderServiceClient;
 import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.service.UserService;
 import com.example.userservice.api.user.vo.RequestUser;
+import com.example.userservice.api.user.vo.ResponseOrder;
 import com.example.userservice.api.user.vo.ResponseUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +33,12 @@ public class UserController {
     private final ModelMapper modelMapper;
 
     private final Environment env;
+
+    /** 주문 service FeignClient */
+    private final OrderServiceClient orderServiceClient;
+
+    /** 서킷브레이커 */
+    private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
 
     /**
      * User Service 상태 체크
@@ -75,7 +85,37 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
 
-        ResponseUser responseUser = userService.getUserByUserId(userId);
+        UserDto userDto = userService.getUserByUserId(userId);
+
+        // FeignClient 사용하여 order service 요청
+//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+//        userDto.setOrders(orders);
+
+        log.info("before call orders microservice");
+
+        // 서킷 브레이커 패턴 적용
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("cb-userToOrder");
+        List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
+                throwable -> new ArrayList<>());
+        log.info("after called orders microservice");
+
+        userDto.setOrders(orders);
+
+        // RestTemplate 사용하여 order service 요청
+//        Optional.ofNullable(env.getProperty("order_service.url")).ifPresent(orderServiceUrl -> {
+//            String requestOrderUrl = String.format(orderServiceUrl, userId);
+//
+//            ResponseEntity<List<ResponseOrder>> orderListResponse =
+//                    restTemplate.exchange(requestOrderUrl,
+//                            HttpMethod.GET,
+//                            null,
+//                            new ParameterizedTypeReference<>() {});
+//
+//            List<ResponseOrder> orders = orderListResponse.getBody();
+//            userDto.setOrders(orders);
+//        });
+
+        ResponseUser responseUser = modelMapper.map(userDto, ResponseUser.class);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }
