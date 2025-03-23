@@ -44,6 +44,10 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     // Rate Limiter를 구현하기 위한 디펜던시
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+    // Micrometer가 수집한 애플리케이션의 성능 및 상태 관련 데이터를 Prometheus 형식으로 변환
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

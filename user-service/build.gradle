@@ -63,6 +63,9 @@ dependencies {
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 
+    // Micrometer가 수집한 애플리케이션의 성능 및 상태 관련 데이터를 Prometheus 형식으로 변환
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     // QueryDSL
     implementation 'com.querydsl:querydsl-core:5.1.0'
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'

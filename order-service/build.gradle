@@ -50,6 +50,9 @@ dependencies {
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    // Micrometer가 수집한 애플리케이션의 성능 및 상태 관련 데이터를 Prometheus 형식으로 변환
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
