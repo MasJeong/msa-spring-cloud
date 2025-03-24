@@ -3,13 +3,11 @@ package com.example.orderservice.order.service;
 import com.example.orderservice.order.domain.OrderEntity;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.repository.OrderRepository;
-import com.example.orderservice.order.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,14 +51,11 @@ public class OrderService {
 
     /**
      * 사용자 주문 목록 조회
+     *
      * @param userId 사용자 ID
      * @return 사용자 주문 목록
      */
-    public List<ResponseOrder> getOrdersByUserId(String userId) {
-        return Optional.ofNullable(orderRepository.findByUserId(userId))
-                .orElseGet(Collections::emptyList)
-                .stream()
-                .map(order -> modelMapper.map(order, ResponseOrder.class))
-                .toList();
+    public List<OrderEntity> getOrdersByUserId(String userId) {
+        return orderRepository.findByUserId(userId);
     }
 }
