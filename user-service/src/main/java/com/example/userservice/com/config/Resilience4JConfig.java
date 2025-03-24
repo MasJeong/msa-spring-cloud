@@ -31,10 +31,10 @@ public class Resilience4JConfig {
      * - 60초 경과 후 (waitDurationInOpenState)
      * <p>
      * from HALF-OPEN to CLOSED:
-     * - 10개의 요청 중 호출 실패율과 느린 호출율이 임계값 이하
+     * - 20개의 요청 중 호출 실패율과 느린 호출율이 임계값 이하
      * <p>
      * from HALF-OPEN to OPEN:
-     * - 10개의 요청 중 실패율 또는 느린 호출율이 임계값 초과
+     * - 20개의 요청 중 실패율 또는 느린 호출율이 임계값 초과
      *
      * @return Custom CircuitBreakerFactory
      */
@@ -67,10 +67,10 @@ public class Resilience4JConfig {
                 .slidingWindowType(CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
                 .slidingWindowSize(20)
                 /*
-                HALF-OPEN 상태에서 10개의 호출을 허용
-                10개의 호출이라면 시스템 회복 여부를 판단하기 괜찮을 것 같다.
+                HALF-OPEN 상태에서 20개의 호출을 허용
+                20개의 호출이라면 시스템 회복 여부를 판단하기 괜찮을 것 같다.
                  */
-                .permittedNumberOfCallsInHalfOpenState(10)
+                .permittedNumberOfCallsInHalfOpenState(20)
                 .minimumNumberOfCalls(20) // 최소 20번 호출 후에 실패율을 계산
                 .recordExceptions(IOException.class, TimeoutException.class) // 해당 예외들을 실패로 기록한다.
 //                .ignoreExceptions()
