@@ -1,0 +1,6 @@
+/keystore/**
+/docker-files/**
+/native-file-repo/**
+/prometheus-3.2.1/**
+/zipkin/**
+/git-local-repo
