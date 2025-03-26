@@ -19,11 +19,11 @@ RUN ./gradlew clean build -x test --no-daemon && \
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# 2.1 레이어드 JAR 복사 (Spring Boot 3.x+ 자동 레이어링)
-COPY --from=builder /app/build/libs/*.jar app.jar
+# 2.1 레이어 복사 최적화 (변경 빈도 낮은 순)
 COPY --from=builder /app/dependencies/ ./
 COPY --from=builder /app/spring-boot-loader/ ./
 COPY --from=builder /app/application/ ./
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 2.2 진입점 설정
 ENTRYPOINT ["java","-jar","app.jar"]
