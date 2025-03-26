@@ -19,6 +19,7 @@ target/
 *.iws
 *.iml
 *.ipr
+/src/main/generated/
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,4 +33,5 @@ build/
 
 ### VS Code ###
 .vscode/
-/gradle/wrapper/**
+
+/out/production/**
