@@ -3,7 +3,7 @@
 
 FROM mariadb:11.4
 ENV MYSQL_ROOT_PASSWORD root
-ENV MYSQL_DATABASES=user_db
+ENV MYSQL_DATABASE user_db
 
 # 초기화 SQL 파일 복사
 COPY ./all_databases.sql /docker-entrypoint-initdb.d/
