@@ -1,4 +1,5 @@
 /keystore/**
+/mariadb-docker/**.sql
 /native-file-repo/**
 /prometheus-3.2.1/**
 /zipkin/**
