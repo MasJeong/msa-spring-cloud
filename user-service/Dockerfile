@@ -24,5 +24,10 @@ COPY --from=builder /app/spring-boot-loader/ ./
 COPY --from=builder /app/application/ ./
 COPY --from=builder /app/build/libs/*.jar app.jar
 
+ENV _JAVA_OPTIONS "-XX:MinRAMPercentage=60.0 -XX:MaxRAMPercentage=90.0 \
+-Dfile.encoding=UTF-8 \
+-Dspring.output.ansi.enabled=ALWAYS \
+-Duser.timezone=Asia/Seoul"
+
 # 2.2 진입점 설정
 ENTRYPOINT ["java","-jar","app.jar"]
