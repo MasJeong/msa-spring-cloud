@@ -6,8 +6,8 @@ logging:
     console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p [%thread] [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
   level:
     com.example.catalogservice: DEBUG
-    org.springframework: DEBUG
-    root: DEBUG
+    org.springframework: INFO
+    root: INFO
     org.apache.kafka.clients: INFO
     org.hibernate.SQL: DEBUG
     # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
@@ -28,7 +28,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
 
 eureka:

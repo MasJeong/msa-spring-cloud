@@ -22,7 +22,7 @@ spring:
     password: order_user
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
 
 eureka:
