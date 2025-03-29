@@ -1,6 +1,6 @@
 package com.example.userservice.com.security;
 
-import com.example.userservice.com.support.TestSupport;
+import com.example.userservice.com.support.RepositoryTestSupport;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @SpringBootTest
-class JwtTest extends TestSupport {
+class JwtRepositoryTest extends RepositoryTestSupport {
 
     @Autowired
     private Environment env;
@@ -69,8 +69,8 @@ class JwtTest extends TestSupport {
 
         // then
         assertNotNull(token);
-        assertEquals(payload.getSubject(), username);
-        assertEquals(roleValue, roleName);
+        assertEquals(username, payload.getSubject());
+        assertEquals(roleName, roleValue);
     }
 
 }

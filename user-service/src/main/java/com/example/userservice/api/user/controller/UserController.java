@@ -130,7 +130,9 @@ public class UserController {
 
         UserDto userDto = modelMapper.map(requestUser, UserDto.class);
 
-        ResponseUser responseUser = userService.createUser(userDto);
+        User saveUser = userService.createUser(userDto);
+
+        ResponseUser responseUser = modelMapper.map(saveUser, ResponseUser.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }

@@ -6,6 +6,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles({"test"})
 @Import(QuerydslConfig.class)
-public abstract class TestSupport {
+public abstract class RepositoryTestSupport {
 
 }

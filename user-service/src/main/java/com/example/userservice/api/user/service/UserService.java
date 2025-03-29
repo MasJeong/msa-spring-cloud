@@ -4,7 +4,6 @@ import com.example.userservice.api.role.repository.RoleRepository;
 import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.repository.UserRepository;
-import com.example.userservice.api.user.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -90,15 +89,13 @@ public class UserService implements UserDetailsService {
      * @return 신규 사용자 정보
      */
     @Transactional
-    public ResponseUser createUser(UserDto userDto) {
+    public User createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
 
         User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(userDto.getPwd()));
 
-        userRepository.save(user);
-
-        return modelMapper.map(userDto, ResponseUser.class);
+        return userRepository.save(user);
     }
 
     /**
@@ -126,4 +123,5 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
 }

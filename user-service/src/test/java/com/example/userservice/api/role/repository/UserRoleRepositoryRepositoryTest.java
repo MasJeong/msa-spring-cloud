@@ -4,7 +4,7 @@ import com.example.userservice.api.role.domain.Role;
 import com.example.userservice.api.role.domain.UserRole;
 import com.example.userservice.api.user.domain.User;
 import com.example.userservice.api.user.repository.UserRepository;
-import com.example.userservice.com.support.TestSupport;
+import com.example.userservice.com.support.RepositoryTestSupport;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRoleRepositoryTest extends TestSupport {
+public class UserRoleRepositoryRepositoryTest extends RepositoryTestSupport {
 
     @PersistenceContext
     EntityManager em;
