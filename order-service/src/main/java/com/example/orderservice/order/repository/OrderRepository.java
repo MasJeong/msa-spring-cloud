@@ -8,7 +8,19 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
+    /**
+     * 주문 정보를 조회한다.
+     *
+     * @param orderId 주문 ID
+     * @return 주문 상세정보
+     */
     Optional<OrderEntity> findByOrderId(String orderId);
 
+    /**
+     * 주문 목록을 조회한다.
+     *
+     * @param userId 사용자 ID
+     * @return 주문 목록
+     */
     List<OrderEntity> findByUserId(String userId);
 }
