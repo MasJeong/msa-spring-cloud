@@ -49,7 +49,7 @@ public class OrderController {
 
         List<ResponseOrder> responseOrders = new ArrayList<>();
 
-        orders.forEach(user -> responseOrders.add(modelMapper.map(orders, ResponseOrder.class)));
+        orders.forEach(order -> responseOrders.add(modelMapper.map(order, ResponseOrder.class)));
 
         return ResponseEntity.status(HttpStatus.OK).body(responseOrders);
     }
