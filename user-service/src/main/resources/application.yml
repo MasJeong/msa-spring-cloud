@@ -66,3 +66,13 @@ management:
     zipkin:
       tracing:
         endpoint: "http://localhost:9411/api/v2/spans"
+
+# 2025-04-13 k8s 설정을 위한 임시 속성
+gateway:
+  ip: ${GATEWAY_IP}
+
+order-service-url: ${ORDER-SERVICE-URL}
+
+token:
+  expiration_time: ${TOKEN_EXPIRATION_TIME}
+  secret: ${TOKEN_SECRET}

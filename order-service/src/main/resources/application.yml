@@ -15,6 +15,9 @@ logging:
 spring:
   application:
     name: order-service
+  kafka:
+    producer:
+      bootstrap-servers: ${BOOTSTRAP-SERVERS} # 2025-04-13 k8s 설정을 위한 임시 속성
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/order_db
@@ -31,7 +34,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
-
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     lease-renewal-interval-in-seconds: 10

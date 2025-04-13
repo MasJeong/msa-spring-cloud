@@ -16,6 +16,11 @@ logging:
 spring:
   application:
     name: catalog-service
+  kafka:  # 2025-04-13 k8s 설정을 위한 임시 속성
+    consumer:
+      bootstrap-servers: ${BOOTSTRAP-SERVERS} # Kafka 클러스에 대한 초기 연결에 사용할 호스트 : 포트 목록
+      group-id: consumer_group01 # Group id
+      auto-offset-reset: earliest
   data:
     redis:
       host: 127.0.0.1
@@ -42,3 +47,7 @@ eureka:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     lease-renewal-interval-in-seconds: 10
     prefer-ip-address: true
+
+# 2025-04-13 k8s 설정을 위한 임시 속성
+topic:
+  name: my-catalog-topic
