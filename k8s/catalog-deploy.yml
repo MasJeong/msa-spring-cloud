@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: catalog-service
-          image: masjeong/catalog-service:k8s_v1.0
+          image: masjeong/catalog-service:k8s_v0.1_temp
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
