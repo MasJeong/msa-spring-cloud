@@ -104,6 +104,7 @@ public class UserService implements UserDetailsService {
      * @param userId 사용자 아이디
      * @return 사용자 및 주문 정보
      */
+    @Transactional(readOnly = true)
     public UserDto getUserByUserId(String userId) {
         User user = userRepository.findByUserId(userId);
 
