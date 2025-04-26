@@ -1,9 +1,11 @@
 package com.example.catalogservice.com.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -13,8 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @EnableKafka
+@RequiredArgsConstructor
 @Configuration
 public class KafkaConsumerConfig {
+
+    private final Environment env;
 
     /**
      * Kafka 컨슈머 팩토리 생성 Bean
@@ -26,9 +31,13 @@ public class KafkaConsumerConfig {
         Map<String, Object> properties = new HashMap<>();
 
         // Kafka 브로커의 주소 설정
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9094");
+//        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9094");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.consumer.bootstrap-servers"));
+
         // 컨슈머 그룹 ID 설정
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "consumerGroupId");
+//        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "consumerGroupId");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, env.getProperty("spring.kafka.consumer.group-id"));
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, env.getProperty("spring.kafka.consumer.auto-offset-reset"));
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
