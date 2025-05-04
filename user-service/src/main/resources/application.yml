@@ -76,3 +76,8 @@ order-service-url: ${ORDER-SERVICE-URL}
 token:
   expiration_time: ${TOKEN_EXPIRATION_TIME}
   secret: ${TOKEN_SECRET}
+
+webdav:
+  username: "jihun"
+  password: "40102987"
+  base-url: "http://127.0.0.1/webdav/"
