@@ -1,5 +1,7 @@
 package com.example.userservice.com.config;
 
+import com.github.sardine.Sardine;
+import com.github.sardine.SardineFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * WebDAV 서버 연결을 위한 Sardine 클라이언트 설정 클래스
- * application.yml의 webdav 설정 항목을 주입받아 사용
  */
 @Getter
 @Setter
@@ -22,18 +23,21 @@ public class WebDAVConfig {
     /** PW */
     private String password;
 
+    /** WebDAV Base URL */
     private String baseUrl;
 
-
     /**
-     * WebDAV 서버 연결을 위한 Sardine 빈 생성
+     * WebDAV 클라이언트 라이브러리 Bean
      *
-     * @return 구성된 Sardine 클라이언트 인스턴스
+     * @return WebDAV 클라이언트 빈
      */
     @Bean
-    public Sardine webDavClient() {
-        Sardine sardine = new OkHttpSardine();
-        sardine.setCredentials(username, password);
+    public Sardine sardine() {
+        Sardine sardine = SardineFactory.begin(username, password);
+
+        // 사전 인증 적용
+        sardine.enablePreemptiveAuthentication(baseUrl, 80, -1);
+
         return sardine;
     }
 

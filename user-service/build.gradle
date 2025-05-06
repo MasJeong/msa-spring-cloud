@@ -27,6 +27,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }  // Sardine 라이브러리 위함
 }
 
 ext {
@@ -65,6 +66,8 @@ dependencies {
 
     // Micrometer가 수집한 애플리케이션의 성능 및 상태 관련 데이터를 Prometheus 형식으로 변환
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    implementation 'com.github.lookfirst:sardine:5.13'
 
     // QueryDSL
     implementation 'com.querydsl:querydsl-core:5.1.0'

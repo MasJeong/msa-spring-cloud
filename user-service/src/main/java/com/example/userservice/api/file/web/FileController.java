@@ -1,9 +1,11 @@
 package com.example.userservice.api.file.web;
 
 import com.example.userservice.com.config.WebDAVConfig;
+import com.github.sardine.Sardine;
+import com.github.sardine.impl.SardineException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,24 +14,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/files")
+@RequiredArgsConstructor
 public class FileController {
 
     private final Sardine sardine;
 
-    private final String baseUrl;
-
-    public FileController(Sardine sardine, WebDAVConfig config) {
-        this.sardine = sardine;
-        this.baseUrl = config.getBaseUrl();
-    }
+    private final WebDAVConfig webDAVConfig;
 
     /**
      * WebDAV 파일 업로드 엔드포인트
+     *
      * @param file 업로드할 파일
      * @return 업로드 완료된 파일 경로
      */
@@ -40,14 +41,17 @@ public class FileController {
             return ResponseEntity.badRequest().body("File is empty");
         }
 
-        try {
+        try (InputStream inputStream = file.getInputStream()) {
             String filePath = buildFilePath(file.getOriginalFilename());
-            sardine.put(filePath, file.getInputStream());
+
+            sardine.put(webDAVConfig.getBaseUrl() + "/" + filePath, inputStream);
             return ResponseEntity.ok(filePath);
         } catch (IOException e) {
+            log.error("Sardine file upload failure: ", e);
             return ResponseEntity.internalServerError()
                     .body("Upload failed: " + e.getMessage());
         }
+
     }
 
     private String buildFilePath(String filename) {
@@ -72,24 +76,36 @@ public class FileController {
      * @return 파일 스트림이 포함된 ResponseEntity (자동 다운로드 트리거)
      */
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(@RequestParam String filePath) throws IOException {
-        String fullUrl = baseUrl + "/" + filePath;
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filePath) throws IOException {
 
-        // 파일 존재 여부 사전 확인
-        if (!sardine.exists(fullUrl)) {
-            return ResponseEntity.notFound().build();
+        // 경로 검증
+        if (filePath.matches(".*(\\.\\.|/|\\\\).*")) {
+            return ResponseEntity.badRequest().build();
         }
 
-        // WebDAV 스트림 리소스 획득
-        InputStream inputStream = sardine.get(fullUrl);
-        Resource resource = new InputStreamResource(inputStream);
+        String fullUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
 
-        // 다운로드 헤더 설정
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + extractFilename(filePath) + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+        try {
+            InputStream is = sardine.get(fullUrl);
+            String filename = extractFilename(filePath);
+
+            // 파일명 인코딩
+            String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename*=UTF-8''" + encodedFilename)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new InputStreamResource(is));
+
+        } catch (SardineException e) {
+            if (e.getStatusCode() == 404) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.status(e.getStatusCode()).build();
+        }
     }
 
     /**
