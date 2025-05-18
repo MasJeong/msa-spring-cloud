@@ -36,20 +36,21 @@ public class FileController {
      */
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File is empty");
         }
 
         try (InputStream inputStream = file.getInputStream()) {
             String filePath = buildFilePath(file.getOriginalFilename());
-            sardine.put(webDAVConfig.getBaseUrl() + "/" + filePath, inputStream);
+            String webDAVFileUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
+            log.info("Uploading file to WebDAV: {}", webDAVFileUrl);
+
+            sardine.put(webDAVFileUrl, inputStream);
 
             return ResponseEntity.ok(filePath);
         } catch (IOException e) {
             log.error("Sardine file upload failure: ", e);
-            return ResponseEntity.internalServerError()
-                    .body("Upload failed: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Upload failed: " + e.getMessage());
         }
 
     }
