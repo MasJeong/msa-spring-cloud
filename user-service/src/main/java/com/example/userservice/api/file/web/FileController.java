@@ -45,7 +45,7 @@ public class FileController {
             String webDAVFileUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
             log.info("Uploading file to WebDAV: {}", webDAVFileUrl);
 
-            sardine.put(webDAVFileUrl, inputStream);
+            sardine.put(webDAVFileUrl, inputStream, "image/png");
 
             return ResponseEntity.ok(filePath);
         } catch (IOException e) {
