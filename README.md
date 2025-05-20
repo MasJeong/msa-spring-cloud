@@ -3,6 +3,7 @@
 ## 아키텍처 다이어그램(예정)
 <img width="781" alt="Image" src="https://github.com/user-attachments/assets/b12bacee-b58f-45db-9194-38f435f35408" />
 
+### 프로젝트 정리 노션
 https://nickel-painter-d6a.notion.site/msa-spring-cloud-190e2100a14b808a9e99c513edfd6a06
 
 ### 구성 요소
