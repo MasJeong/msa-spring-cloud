@@ -45,7 +45,7 @@ public class FileController {
             String webDAVFileUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
             log.info("Uploading file to WebDAV: {}", webDAVFileUrl);
 
-            sardine.put(webDAVFileUrl, inputStream, "image/png");
+            sardine.put(webDAVFileUrl, inputStream);
 
             return ResponseEntity.ok(filePath);
         } catch (IOException e) {
@@ -90,8 +90,7 @@ public class FileController {
     @GetMapping("/download")
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filePath) throws IOException {
 
-        // 경로 검증
-        if (filePath.matches(".*(\\.\\.|/|\\\\).*")) {
+        if (filePath.contains("..") || filePath.contains("\\")) {
             return ResponseEntity.badRequest().build();
         }
 
