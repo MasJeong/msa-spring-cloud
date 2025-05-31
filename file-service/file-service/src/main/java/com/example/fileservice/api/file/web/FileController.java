@@ -1,6 +1,6 @@
-package com.example.userservice.api.file.web;
+package com.example.fileservice.api.file.web;
 
-import com.example.userservice.com.config.WebDAVConfig;
+import com.example.fileservice.com.config.WebDAVConfig;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
 import lombok.RequiredArgsConstructor;

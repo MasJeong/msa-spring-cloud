@@ -1,4 +1,4 @@
-package com.example.userservice.com.config;
+package com.example.fileservice.com.config;
 
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
