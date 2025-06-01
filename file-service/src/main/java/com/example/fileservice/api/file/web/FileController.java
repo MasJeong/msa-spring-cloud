@@ -1,5 +1,6 @@
 package com.example.fileservice.api.file.web;
 
+import com.example.fileservice.api.file.constants.FileConstant;
 import com.example.fileservice.com.config.WebDAVConfig;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,7 @@ public class FileController {
     private final WebDAVConfig webDAVConfig;
 
     /**
-     * WebDAV 파일 업로드 엔드포인트
+     * WebDAV 파일 업로드
      *
      * @param file 업로드할 파일
      * @return 업로드 완료된 파일 경로
@@ -38,6 +40,10 @@ public class FileController {
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        if (file.getSize() > FileConstant.MAX_FILE_SIZE) {
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File size exceeds limit (1GB)");
         }
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -60,7 +66,7 @@ public class FileController {
      * 경로 내에 중복된 슬래시("//")가 있을 경우 하나의 슬래시("/")로 치환.
      *
      * @param filename 파일명 (예: "example.txt")
-     * @return 날짜 디렉터리 경로와 결합된 파일 경로 (예: "2024/05/15/example.txt")
+     * @return 날짜 디렉터리 경로와 결합된 파일 경로 (예: "2025/05/15/example.txt")
      */
     private String buildFilePath(String filename) {
         String path = generateDateDirectory() + "/" + filename;
@@ -70,7 +76,7 @@ public class FileController {
     /**
      * 오늘 날짜를 기준으로 연/월/일(yyyy/MM/dd) 형태의 디렉터리 경로 생성.
      *
-     * @return 오늘 날짜의 디렉터리 경로 (예: "2024/05/15")
+     * @return 오늘 날짜의 디렉터리 경로 (예: "2025/05/15")
      */
     private String generateDateDirectory() {
         LocalDate now = LocalDate.now();
