@@ -26,8 +26,10 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class FileController {
 
+    /** WebDAV 서버와의 HTTP 통신을 위한 Sardine 클라이언트 */
     private final Sardine sardine;
 
+    /** WebDAV 관련 설정 정보 */
     private final WebDAVConfig webDAVConfig;
 
     /**
