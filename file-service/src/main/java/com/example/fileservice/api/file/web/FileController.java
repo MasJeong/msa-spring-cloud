@@ -2,6 +2,7 @@ package com.example.fileservice.api.file.web;
 
 import com.example.fileservice.api.file.constants.FileConstant;
 import com.example.fileservice.com.config.WebDAVConfig;
+import com.example.fileservice.com.util.FileUtil;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 
 @Slf4j
 @RestController
@@ -47,7 +47,7 @@ public class FileController {
         }
 
         try (InputStream inputStream = file.getInputStream()) {
-            String filePath = buildFilePath(file.getOriginalFilename());
+            String filePath = FileUtil.buildFilePath(file.getOriginalFilename());
             String webDAVFileUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
             log.info("Uploading file to WebDAV: {}", webDAVFileUrl);
 
@@ -62,31 +62,6 @@ public class FileController {
     }
 
     /**
-     * 파일명을 오늘 날짜(yyyy/MM/dd) 디렉터리 경로와 결합하여 파일 경로 생성.
-     * 경로 내에 중복된 슬래시("//")가 있을 경우 하나의 슬래시("/")로 치환.
-     *
-     * @param filename 파일명 (예: "example.txt")
-     * @return 날짜 디렉터리 경로와 결합된 파일 경로 (예: "2025/05/15/example.txt")
-     */
-    private String buildFilePath(String filename) {
-        String path = generateDateDirectory() + "/" + filename;
-        return path.replace("//", "/");
-    }
-
-    /**
-     * 오늘 날짜를 기준으로 연/월/일(yyyy/MM/dd) 형태의 디렉터리 경로 생성.
-     *
-     * @return 오늘 날짜의 디렉터리 경로 (예: "2025/05/15")
-     */
-    private String generateDateDirectory() {
-        LocalDate now = LocalDate.now();
-        return now.getYear() + "/"
-                + String.format("%02d", now.getMonthValue()) + "/"
-                + String.format("%02d", now.getDayOfMonth());
-    }
-
-
-    /**
      * WebDAV 서버에서 파일을 스트리밍 다운로드하는 엔드포인트
      * ex) GET /api/files/download?filePath=user-docs/2025/05/04/test.jpg
      *
@@ -94,7 +69,7 @@ public class FileController {
      * @return 파일 스트림이 포함된 ResponseEntity (자동 다운로드 트리거)
      */
     @GetMapping("/download")
-    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filePath) throws IOException {
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filePath) {
 
         if (filePath.contains("..") || filePath.contains("\\")) {
             return ResponseEntity.badRequest().build();
@@ -102,11 +77,8 @@ public class FileController {
 
         String fullUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
 
-        try {
-            InputStream is = sardine.get(fullUrl);
-            String filename = extractFilename(filePath);
-
-            // 파일명 인코딩
+        try (InputStream is = sardine.get(fullUrl)) {
+            String filename = FileUtil.extractFilename(filePath);
             String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8)
                     .replaceAll("\\+", "%20");
 
@@ -115,24 +87,17 @@ public class FileController {
                             "attachment; filename*=UTF-8''" + encodedFilename)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(new InputStreamResource(is));
-
         } catch (SardineException e) {
             if (e.getStatusCode() == 404) {
                 return ResponseEntity.notFound().build();
             }
 
+            log.error("Sardine file download failure: ", e);
             return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (IOException e) {
+            log.error("File download failure: ", e);
+            return ResponseEntity.internalServerError().build();
         }
-    }
-
-    /**
-     * 파일 경로에서 실제 파일명 추출
-     *
-     * @param filePath 전체 파일 경로 문자열
-     * @return 순수 파일명 (예: "test.jpg")
-     */
-    private String extractFilename(String filePath) {
-        return filePath.substring(filePath.lastIndexOf('/') + 1);
     }
 
 }
