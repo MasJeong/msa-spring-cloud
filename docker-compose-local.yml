@@ -1,0 +1,441 @@
+version: "3.8"
+
+services:
+  # 1. MariaDB 11.4
+  mariadb:
+    image: masjeong/mariadb:1.0
+    container_name: mariadb
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user_db
+      TZ: Asia/Seoul
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p$$MARIADB_ROOT_PASSWORD"]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+      start_period: 60s
+
+  # 2. Redis (Rate Limiting, Session Storage)
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 3. Zookeeper (Kafka 의존성)
+#  - Kraft 모드로 변경함에 따라 주석 처리함
+#  zookeeper:
+#    image: bitnami/zookeeper:latest
+#    container_name: zookeeper
+#    restart: always
+#    ports:
+#      - "2181:2181"
+#    environment:
+#      ALLOW_ANONYMOUS_LOGIN: yes
+#      ZOO_ENABLE_ADMIN_SERVER: yes
+#    volumes:
+#      - zookeeper_data:/bitnami/zookeeper
+#    networks:
+#      - ecommerce-network
+#    healthcheck:
+#      test: ["CMD", "zkServer.sh", "status"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+
+  # 4. Kafka
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    restart: always
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_CFG_PROCESS_ROLES: broker,controller  # broker와 controller 역할 모두 수행
+      KAFKA_CFG_NODE_ID: 1                        # 클러스터 내 고유값, 여러 노드면 각각 다르게
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094 # 브로커와 컨트롤러 리스너 지정
+      # 운영 yml 경우 수정해야함
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,CONTROLLER://kafka:9093,EXTERNAL://kafka:9094
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ALLOW_PLAINTEXT_LISTENER: yes
+    volumes:
+      - kafka_data:/bitnami/kafka
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka:9092 --list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 4-1. RabbitMQ (Spring Cloud Bus)
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "15671:15671"  # Management SSL
+      - "15672:15672"  # Management UI
+      - "5671:5671"    # AMQP SSL
+      - "5672:5672"    # AMQP
+      - "4369:4369"    # Erlang Port Mapper
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 5. Config Service
+  config-service:
+    image: masjeong/config-service:1.0
+    container_name: config-service
+    restart: always
+    ports:
+      - "8888:8888"
+    environment:
+      - GIT_SSH_KEY_PATH=/root/.ssh/github_rsa # Git SSH 키 경로
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD} # JKS 키스토어 비밀번호
+    volumes:
+      - ./keystore/github_key/rsa_github_key:/root/.ssh/github_rsa:ro # 호스트 SSH 키를 컨테이너에 읽기전용으로 마운트
+      - ./keystore/github_key/known_hosts:/root/.ssh/known_hosts:ro  # known_hosts 마운트
+      - ./keystore/apiEncryptionKey.jks:/app/keystore/apiEncryptionKey.jks:ro
+      - ./keystore/publicKey.jks:/app/keystore/publicKey.jks:ro
+      - ./keystore/trustServer.cer:/app/keystore/trustServer.cer:ro
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+
+  # 6. Eureka Discovery
+  discovery-service:
+    image: masjeong/discovery-service:1.0
+    container_name: discovery-service
+    restart: always
+    ports:
+      - "8761:8761"
+    environment:
+      - CONFIG_URI=http://config-service:8888
+    depends_on:
+      config-service:
+        condition: service_started
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 7. API Gateway
+  apigateway-service:
+    image: masjeong/apigateway-service:1.0
+    container_name: apigateway-service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      config-service:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 8. Catalog Service
+  catalog-service:
+    image: masjeong/catalog-service:1.0
+    container_name: catalog-service
+    restart: always
+    ports:
+      - "0:8081"  # 랜덤 포트 할당 (내부 포트 8081)
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - DB_HOST=mariadb
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SERVER_PORT=8081
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      config-service:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 9. User Service
+  user-service:
+    image: masjeong/user-service:1.0
+    container_name: user-service
+    restart: always
+    ports:
+      - "0:8082"  # 랜덤 포트 할당 (내부 포트 8082)
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - DB_HOST=mariadb
+      - SERVER_PORT=8082
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      config-service:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 10. Order Service
+  order-service:
+    image: masjeong/order-service:1.0
+    container_name: order-service
+    restart: always
+    ports:
+      - "0:8083"  # 랜덤 포트 할당 (내부 포트 8083)
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - DB_HOST=mariadb
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SERVER_PORT=8083
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      config-service:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 11. Cart Service
+  cart-service:
+    image: masjeong/cart-service:1.0
+    container_name: cart-service
+    restart: always
+    ports:
+      - "0:8084"
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SERVER_PORT=8084
+    depends_on:
+      config-service:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 12. File Service
+  file-service:
+    image: masjeong/file-service:1.0
+    container_name: file-service
+    restart: always
+    ports:
+      - "0:8085"
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - SERVER_PORT=8085
+    volumes:
+      - ./native-file-repo:/app/files
+    depends_on:
+      config-service:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 13. Zipkin (Distributed Tracing)
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    restart: always
+    ports:
+      - "9411:9411"
+    environment:
+      - STORAGE_TYPE=mysql
+      - MYSQL_HOST=mariadb
+      - MYSQL_TCP_PORT=3306
+      - MYSQL_DB=zipkin
+      - MYSQL_USER=root
+      - MYSQL_PASS=root
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9411/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 14. Prometheus (Monitoring)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus-3.2.1/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 15. Grafana (Monitoring Dashboard)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 16. Kafka UI (Optional - Kafka Management)
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui:latest
+  #   container_name: kafka-ui
+  #   restart: always
+  #   ports:
+  #     - "9091:8080"
+  #   environment:
+  #     - DYNAMIC_CONFIG_ENABLED=true
+  #     - KAFKA_CLUSTERS_0_NAME=msa_kafka
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #   networks:
+  #     - ecommerce-network
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+volumes:
+  mariadb_data:
+  redis_data:
+#  zookeeper_data:
+  kafka_data:
+  rabbitmq_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  ecommerce-network:
+    driver: bridge
