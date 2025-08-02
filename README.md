@@ -62,19 +62,19 @@ docker-compose up -d
 #### 단계별 시작
 ```bash
 # 1. 인프라 서비스 시작
-docker-compose up -d mariadb redis kafka
+docker-compose -f docker-compose-local.yml up -d mariadb redis kafka rabbitmq
 
 # 2. 설정 및 디스커버리 서비스 시작
-docker-compose up -d config-service discovery-service
+docker-compose -f docker-compose-local.yml up -d config-service discovery-service
 
 # 3. API Gateway 시작
-docker-compose up -d apigateway-service
+docker-compose -f docker-compose-local.yml up -d apigateway-service
 
 # 4. 비즈니스 서비스 시작
-docker-compose up -d user-service order-service catalog-service cart-service file-service
+docker-compose -f docker-compose-local.yml up -d user-service order-service catalog-service cart-service file-service
 
 # 5. 모니터링 서비스 시작
-docker-compose up -d zipkin prometheus grafana kafka-ui
+docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana kafka-ui
 ```
 
 ## 🔗 서비스 접속 정보
