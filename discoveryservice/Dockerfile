@@ -4,13 +4,21 @@
 FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
 
-# 1.1 의존성 캐싱을 위한 단계
-COPY gradle gradle
-COPY build.gradle settings.gradle gradlew ./
-RUN ./gradlew dependencies --no-daemon
+# 실행 권한 부여
+COPY gradlew .
+RUN chmod +x gradlew
 
-# 1.2 소스 코드 복사 및 빌드
-COPY src src
+# 의존성 캐시를 위한 설정 파일 먼저 복사
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle gradle
+
+# 의존성만 미리 다운로드 (캐시 레이어 용)
+RUN ./gradlew dependencies --no-daemon || true
+
+# 소스 복사
+COPY src/ src/
+
+# 빌드 및 Layered JAR extract
 RUN ./gradlew clean build -x test --no-daemon && \
     java -Djarmode=layertools -jar build/libs/*.jar extract
 

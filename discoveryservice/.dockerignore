@@ -2,3 +2,6 @@
 .gradle
 build
 !build/libs/*.jar
+*.log
+.idea/
+.vscode/
