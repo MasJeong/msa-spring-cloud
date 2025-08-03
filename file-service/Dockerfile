@@ -18,6 +18,9 @@ RUN ./gradlew clean build -x test --no-daemon && \
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
+# 2.1 curl과 bash 설치 (healthcheck 및 exec 접속용)
+RUN apk add --no-cache curl bash
+
 # 2.1 레이어 복사 최적화 (변경 빈도 낮은 순)
 COPY --from=builder /app/dependencies/ ./
 COPY --from=builder /app/spring-boot-loader/ ./
