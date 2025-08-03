@@ -85,7 +85,7 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana kafka
 - **Config Service**: http://localhost:8888
 - **Zipkin**: http://localhost:9411
 - **Prometheus**: http://localhost:9090
-- **Grafana**: http://localhost:3000
+- **Grafana**: http://localhost:3001
 - **Kafka UI**: http://localhost:9091
 
 ### API 엔드포인트
