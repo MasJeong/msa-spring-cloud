@@ -34,8 +34,8 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${DB_HOST}:3306/user_db
-    username: root
-    password: root
+    username: webuser
+    password: webuser
   h2:
     console:
       enabled: false
