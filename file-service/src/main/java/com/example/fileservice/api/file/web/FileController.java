@@ -68,7 +68,7 @@ public class FileController {
      * ex) GET /api/files/download?filePath=user-docs/2025/05/04/test.jpg
      *
      * @param filePath WebDAV 기본 URL 기준 상대 파일 경로 (예: "user-docs/2025/05/04/test.jpg")
-     * @return 파일 스트림이 포함된 ResponseEntity (자동 다운로드 트리거)
+     * @return 파일 스트림이 포함된 ResponseEntity
      */
     @GetMapping("/download")
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filePath) {
@@ -78,6 +78,7 @@ public class FileController {
         }
 
         String fullUrl = webDAVConfig.getBaseUrl() + "/" + filePath;
+        log.info("Downloading file from WebDAV: {}", fullUrl);
 
         try (InputStream is = sardine.get(fullUrl)) {
             String filename = FileUtil.extractFilename(filePath);
