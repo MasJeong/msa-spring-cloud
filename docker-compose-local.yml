@@ -213,6 +213,7 @@ services:
       - DB_HOST=mariadb
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SERVER_PORT=8081
+      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       mariadb:
         condition: service_healthy
@@ -240,6 +241,11 @@ services:
       - EUREKA_URI=http://discovery-service:8761/eureka
       - DB_HOST=mariadb
       - SERVER_PORT=8082
+      - SPRING_PROFILES_ACTIVE=dev
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
     depends_on:
       mariadb:
         condition: service_healthy
@@ -268,6 +274,11 @@ services:
       - DB_HOST=mariadb
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SERVER_PORT=8083
+      - SPRING_PROFILES_ACTIVE=dev
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
     depends_on:
       mariadb:
         condition: service_healthy
@@ -296,6 +307,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - SERVER_PORT=8084
+      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       config-service:
         condition: service_healthy
@@ -322,6 +334,12 @@ services:
       - CONFIG_URI=http://config-service:8888
       - EUREKA_URI=http://discovery-service:8761/eureka
       - SERVER_PORT=8085
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_HOST=mariadb
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
     volumes:
       - ./native-file-repo:/app/files
     depends_on:
@@ -357,7 +375,6 @@ services:
     networks:
       - ecommerce-network
     healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:9411/health"]
       test: ["CMD-SHELL", "wget --spider -q http://localhost:9411/health || exit 1"]
       interval: 30s
       timeout: 10s
