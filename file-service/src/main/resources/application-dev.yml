@@ -32,11 +32,11 @@ spring:
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${DB_HOST}:3306/user_db
-    username: root
-    password: root
+#  datasource:
+#    driver-class-name: org.mariadb.jdbc.Driver
+#    url: jdbc:mariadb://${DB_HOST}:3306/user_db
+#    username: root
+#    password: root
   h2:
     console:
       enabled: false
