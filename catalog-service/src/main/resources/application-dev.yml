@@ -24,8 +24,8 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${DB_HOST}:3306/catalog_db
-    username: root
-    password: root
+    username: catalog_user
+    password: catalog_user
   h2:
     console:
       enabled: false
