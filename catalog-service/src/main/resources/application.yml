@@ -22,11 +22,6 @@ spring:
       bootstrap-servers: 127.0.0.1:9094
       group-id: consumer_group01 # Group id
       auto-offset-reset: earliest
-  data:
-    redis:
-      host: 127.0.0.1
-      port: 6379
-      database: 0
   datasource:
     url: jdbc:mariadb://127.0.0.1:3306/catalog_db
     username: catalog_user

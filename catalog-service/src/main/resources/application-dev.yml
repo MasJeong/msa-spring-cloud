@@ -21,11 +21,6 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
       group-id: consumer_group01 # Group id
       auto-offset-reset: earliest
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      database: 0
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${DB_HOST}:3306/user_db
