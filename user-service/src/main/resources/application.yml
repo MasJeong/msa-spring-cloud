@@ -30,8 +30,12 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
-    username: '{cipher}AQBx8CFN7GRJXYF/UJFZrSbvGYlvRFkrBv7sSAWkfpKwJEp1P/Q2mFarLUHvIzisSdg0f4tR0zxwkEIiBiiJnYlzZkCVzce11tdJFjFtR7sbueCyPkFtg5gusNqXaxSddxJhb49mwNKABf7h2jBNfVzaAaAyFvJ3R7MLkZuuT3JXIpQQqdsG6R0C7tvYxIEWvQqW5IIYnzA2yf1xD6XtGqKLtz2MLuOphDnHNiXgpNln1EiU0QyUpl0n1PbS4QTZ9ruoHGL1eWDammyKsekAE2ZoQCWYpOBnLWt0iyUeqHF8CABaYkIIhvAS6BssMYCYXj045yuipMqn/CTZXFrO3t27rceaRtFxId5Q/NhK+p1d23i+hkPEXCJKBOG9Hdfl0aM='
-    password: '{cipher}AQAgLrGQPHfKz53HIpZHS7glE4BqTWtzzW3uSpWWCr8ewZeA3qdTwEiZDVI/mpP0UCVwruxmn/dzbPyHOdOr6FafX/Es+SaQcTjQONqGDJHenIc5zFAq+kQjjb4pDXID22LfkaUvsDffCANVmhqUXEec+WGb3rIIvKhML++ZdkPwtc4U+/upUzaRSClXM53pkah6MGEYU48NoxgQUKBfKD5PpfNTIev+UkU1QmfKxZXAvdizsM2NQnQ1z68juUgo2FNfjf/bcd6rrNnuNanJdR5YMUu/JfzjQFn2IFuvHge5WdEjh1Yq8ksn7bTQSi1Zk8k4+M/ZF+iFCASPuCklOdQZW8S+ljK+EP8if437ropWw8oakVjbZit2QLaxVG0OLGo='
+    # local rabbitmq 계정 정보 admin / admin
+    username: admin
+    password: admin
+    # docker rabbitmq 계정 정보 guest / guest
+  #    username: '{cipher}AQBx8CFN7GRJXYF/UJFZrSbvGYlvRFkrBv7sSAWkfpKwJEp1P/Q2mFarLUHvIzisSdg0f4tR0zxwkEIiBiiJnYlzZkCVzce11tdJFjFtR7sbueCyPkFtg5gusNqXaxSddxJhb49mwNKABf7h2jBNfVzaAaAyFvJ3R7MLkZuuT3JXIpQQqdsG6R0C7tvYxIEWvQqW5IIYnzA2yf1xD6XtGqKLtz2MLuOphDnHNiXgpNln1EiU0QyUpl0n1PbS4QTZ9ruoHGL1eWDammyKsekAE2ZoQCWYpOBnLWt0iyUeqHF8CABaYkIIhvAS6BssMYCYXj045yuipMqn/CTZXFrO3t27rceaRtFxId5Q/NhK+p1d23i+hkPEXCJKBOG9Hdfl0aM='
+  #    password: '{cipher}AQAgLrGQPHfKz53HIpZHS7glE4BqTWtzzW3uSpWWCr8ewZeA3qdTwEiZDVI/mpP0UCVwruxmn/dzbPyHOdOr6FafX/Es+SaQcTjQONqGDJHenIc5zFAq+kQjjb4pDXID22LfkaUvsDffCANVmhqUXEec+WGb3rIIvKhML++ZdkPwtc4U+/upUzaRSClXM53pkah6MGEYU48NoxgQUKBfKD5PpfNTIev+UkU1QmfKxZXAvdizsM2NQnQ1z68juUgo2FNfjf/bcd6rrNnuNanJdR5YMUu/JfzjQFn2IFuvHge5WdEjh1Yq8ksn7bTQSi1Zk8k4+M/ZF+iFCASPuCklOdQZW8S+ljK+EP8if437ropWw8oakVjbZit2QLaxVG0OLGo='
   h2:
     console:
       enabled: false
@@ -42,9 +46,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
-
-  # 0번포트(랜덤포트)를 사용하게되면 애플리케이션을 여러개 실행했어도 Eureka서버에 1개만 실행되는 것처럼 보인다.
-  # 이를 방지하기 위해 사용하는 옵션(instance-id)
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     # Eureka Server로 heartbeat 전송하는 시간 (디폴트 30초)
@@ -63,21 +64,17 @@ management:
     propagation:
       consume: B3
       produce: B3_MULTI
-    zipkin:
-      tracing:
-        endpoint: "http://localhost:9411/api/v2/spans"
+# 2025-06-01 불필요 로그 때문에 임시 주석
+#    zipkin:
+#      tracing:
+#        endpoint: "http://localhost:9411/api/v2/spans"
 
 # 2025-04-13 k8s 설정을 위한 임시 속성
-gateway:
-  ip: ${GATEWAY_IP}
-
-order-service-url: ${ORDER-SERVICE-URL}
-
-token:
-  expiration_time: ${TOKEN_EXPIRATION_TIME}
-  secret: ${TOKEN_SECRET}
-
-webdav:
-  username: "jihun"
-  password: "40102987"
-  base-url: "http://127.0.0.1/webdav/"
+#gateway:
+#  ip: ${GATEWAY_IP}
+#
+#order-service-url: ${ORDER-SERVICE-URL}
+#
+#token:
+#  expiration_time: ${TOKEN_EXPIRATION_TIME}
+#  secret: ${TOKEN_SECRET}

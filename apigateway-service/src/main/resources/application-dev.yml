@@ -12,15 +12,15 @@ spring:
     name: apigateway-service
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
       database: 0
   rabbitmq:
-    host: 127.0.0.1
-    port: 5672
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
     # local rabbitmq 계정 정보 admin / admin
-    username: admin
-    password: admin
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
     # docker rabbitmq 계정 정보 guest / guest
 #    username: '{cipher}AQBx8CFN7GRJXYF/UJFZrSbvGYlvRFkrBv7sSAWkfpKwJEp1P/Q2mFarLUHvIzisSdg0f4tR0zxwkEIiBiiJnYlzZkCVzce11tdJFjFtR7sbueCyPkFtg5gusNqXaxSddxJhb49mwNKABf7h2jBNfVzaAaAyFvJ3R7MLkZuuT3JXIpQQqdsG6R0C7tvYxIEWvQqW5IIYnzA2yf1xD6XtGqKLtz2MLuOphDnHNiXgpNln1EiU0QyUpl0n1PbS4QTZ9ruoHGL1eWDammyKsekAE2ZoQCWYpOBnLWt0iyUeqHF8CABaYkIIhvAS6BssMYCYXj045yuipMqn/CTZXFrO3t27rceaRtFxId5Q/NhK+p1d23i+hkPEXCJKBOG9Hdfl0aM='
 #    password: '{cipher}AQAgLrGQPHfKz53HIpZHS7glE4BqTWtzzW3uSpWWCr8ewZeA3qdTwEiZDVI/mpP0UCVwruxmn/dzbPyHOdOr6FafX/Es+SaQcTjQONqGDJHenIc5zFAq+kQjjb4pDXID22LfkaUvsDffCANVmhqUXEec+WGb3rIIvKhML++ZdkPwtc4U+/upUzaRSClXM53pkah6MGEYU48NoxgQUKBfKD5PpfNTIev+UkU1QmfKxZXAvdizsM2NQnQ1z68juUgo2FNfjf/bcd6rrNnuNanJdR5YMUu/JfzjQFn2IFuvHge5WdEjh1Yq8ksn7bTQSi1Zk8k4+M/ZF+iFCASPuCklOdQZW8S+ljK+EP8if437ropWw8oakVjbZit2QLaxVG0OLGo='
@@ -129,7 +129,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka # discoveryservice
+      defaultZone: http://discovery-service:8761/eureka
 
 # Actuator 설정
 management:

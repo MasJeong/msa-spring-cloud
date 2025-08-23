@@ -1,0 +1,65 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p [%thread] [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
+  level:
+    com.example.userservice: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    org.springframework: INFO
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    # springboot 3.x hibernate 6버전 이상 바인딩된 파라미터 로그 설정
+    org.hibernate.orm.jdbc.bind: TRACE
+
+spring:
+  application:
+    name: user-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true # SQL 쿼리에 주석 추가
+        highlight_sql: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DB_HOST}:3306/user_db
+    username: root
+    password: root
+  h2:
+    console:
+      enabled: false
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh, info, metrics, prometheus
+  # Micrometer 및 zipkin 설정
+  tracing:
+    sampling:
+      probability: 1.0  # 추적할 요청의 비율 설정 (1.0은 모든 요청 추적)
+    propagation:
+      consume: B3
+      produce: B3_MULTI
