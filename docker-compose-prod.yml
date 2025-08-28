@@ -1,0 +1,229 @@
+# docker-compose-prod.yml (SSL 없는 HTTP 버전)
+version: "3.8"
+
+services:
+  # 1. MariaDB - 데이터베이스
+  mariadb:
+    image: masjeong/mariadb:1.0
+    container_name: mariadb
+    restart: always  # 컨테이너 재시작 정책
+    ports:
+      - "3307:3306"  # 호스트:컨테이너 포트 매핑
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}  # 환경변수에서 가져옴
+      MYSQL_DATABASE: user_db
+      TZ: Asia/Seoul
+    volumes:
+      - mariadb_data:/var/lib/mysql  # 데이터 영구 저장
+    networks:
+      - ecommerce-network
+
+  # 2. Redis - 캐시 및 세션 저장소
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    command: redis-server --appendonly yes  # 데이터 영구저장 활성화
+
+  # 3. Kafka - 메시지 큐
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft 모드 설정 (Zookeeper 없이 실행)
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:9092
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ALLOW_PLAINTEXT_LISTENER: yes
+    volumes:
+      - kafka_data:/bitnami/kafka
+    networks:
+      - ecommerce-network
+
+  # 4. RabbitMQ - Spring Cloud Bus용 메시지 브로커
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "15672:15672"  # 관리 UI
+      - "5672:5672"    # AMQP 포트
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ecommerce-network
+
+  # 5. Config Service - 중앙화된 설정 관리
+  config-service:
+    image: masjeong/config-service:${CONFIG_SERVICE_VERSION}
+    container_name: config-service
+    restart: always
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod  # 운영 프로파일 활성화
+      - RABBITMQ_HOST=rabbitmq
+      - KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD}
+    volumes:
+      - ./keystore:/app/keystore:ro  # 키스토어 읽기전용 마운트
+    depends_on:  # 의존성 설정 (다른 서비스가 먼저 실행되어야 함)
+      - mariadb
+      - rabbitmq
+    networks:
+      - ecommerce-network
+
+  # 6. Discovery Service - 서비스 레지스트리 (Eureka)
+  discovery-service:
+    image: masjeong/discovery-service:${DISCOVERY_SERVICE_VERSION}
+    container_name: discovery-service
+    restart: always
+    ports:
+      - "8761:8761"
+    environment:
+      - CONFIG_URI=http://config-service:8888  # Config 서버 주소
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - config-service
+    networks:
+      - ecommerce-network
+
+  # 7. API Gateway - 모든 요청의 진입점
+  apigateway-service:
+    image: masjeong/apigateway-service:${APIGATEWAY_SERVICE_VERSION}
+    container_name: apigateway-service
+    restart: always
+    ports:
+      - "8000:8000"  # 외부에서 접근하는 메인 포트
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - REDIS_HOST=redis
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - config-service
+      - discovery-service
+      - redis
+    networks:
+      - ecommerce-network
+
+  # 8. User Service - 사용자 관리
+  user-service:
+    image: masjeong/user-service:${USER_SERVICE_VERSION}
+    container_name: user-service
+    restart: always
+    # 포트를 외부에 노출하지 않음 (API Gateway를 통해서만 접근)
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - DB_HOST=mariadb
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - config-service
+      - discovery-service
+      - mariadb
+    networks:
+      - ecommerce-network
+
+  # 9. Order Service - 주문 관리
+  order-service:
+    image: masjeong/order-service:${ORDER_SERVICE_VERSION}
+    container_name: order-service
+    restart: always
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - DB_HOST=mariadb
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - config-service
+      - discovery-service
+      - mariadb
+      - kafka
+    networks:
+      - ecommerce-network
+
+  # 10. Catalog Service - 상품 카탈로그 관리
+  catalog-service:
+    image: masjeong/catalog-service:${CATALOG_SERVICE_VERSION}
+    container_name: catalog-service
+    restart: always
+    environment:
+      - CONFIG_URI=http://config-service:8888
+      - EUREKA_URI=http://discovery-service:8761/eureka
+      - DB_HOST=mariadb
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - config-service
+      - discovery-service
+      - mariadb
+      - kafka
+    networks:
+      - ecommerce-network
+
+  # # 11. Cart Service - 장바구니 관리
+  # cart-service:
+  #   image: masjeong/cart-service:${CART_SERVICE_VERSION}
+  #   container_name: cart-service
+  #   restart: always
+  #   environment:
+  #     - CONFIG_URI=http://config-service:8888
+  #     - EUREKA_URI=http://discovery-service:8761/eureka
+  #     - REDIS_HOST=redis
+  #     - SPRING_PROFILES_ACTIVE=prod
+  #   depends_on:
+  #     - config-service
+  #     - discovery-service
+  #     - redis
+  #   networks:
+  #     - ecommerce-network
+
+  # # 12. File Service - 파일 업로드/다운로드 관리
+  # file-service:
+  #   image: masjeong/file-service:${FILE_SERVICE_VERSION}
+  #   container_name: file-service
+  #   restart: always
+  #   environment:
+  #     - CONFIG_URI=http://config-service:8888
+  #     - EUREKA_URI=http://discovery-service:8761/eureka
+  #     - SPRING_PROFILES_ACTIVE=prod
+  #   volumes:
+  #     - file_data:/app/files  # 파일 저장소
+  #   depends_on:
+  #     - config-service
+  #     - discovery-service
+  #   networks:
+  #     - ecommerce-network
+
+# 볼륨 정의 (데이터 영구 저장)
+volumes:
+  mariadb_data:    # MariaDB 데이터
+  redis_data:      # Redis 데이터
+  kafka_data:      # Kafka 데이터
+  rabbitmq_data:   # RabbitMQ 데이터
+  # file_data:       # 업로드된 파일들
+
+# 네트워크 정의 (컨테이너간 통신)
+networks:
+  ecommerce-network:
+    driver: bridge
