@@ -1,0 +1,23 @@
+server:
+  port: 8761
+
+logging:
+  level:
+    com.example.discoveryservice: DEBUG
+    org.springframework: INFO
+    root: INFO
+
+spring:
+  application:
+    name: discoveryservice
+  cloud:
+    config:
+      uri: http://config-service:8888
+      name: ecommerce
+
+eureka:
+  client:
+    # 레지스트리에 자신을 등록할지에 대한 여부 (디폴트 true)
+    register-with-eureka: false
+    # 레지스트리에 있는 정보를 가져올지에 대한 여부 (디폴트 true)
+    fetch-registry: false
