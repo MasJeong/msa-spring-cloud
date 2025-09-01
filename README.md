@@ -25,7 +25,7 @@ https://nickel-painter-d6a.notion.site/msa-spring-cloud-190e2100a14b808a9e99c513
 | 서비스 | 포트        | 설명 |
 |--------|-----------|------|
 | **MariaDB** | 3307      | 메인 데이터베이스 |
-| **Redis** | 6379      | 캐시 및 세션 저장소 |
+| **Redis** | 6379      | 캐시 저장소 |
 | **Kafka** | 9092/9094 | 메시지 큐 |
 | **Zipkin** | 9411      | 분산 추적 |
 | **Prometheus** | 9090      | 메트릭 수집 |
@@ -39,20 +39,7 @@ https://nickel-painter-d6a.notion.site/msa-spring-cloud-190e2100a14b808a9e99c513
 - Java 17+
 - Gradle
 
-### 2. Docker 이미지 빌드
-
-#### Linux/Mac
-```bash
-chmod +x build-images.sh
-./build-images.sh
-```
-
-#### Windows
-```cmd
-build-images.bat
-```
-
-### 3. 서비스 시작
+### 2. 서비스 시작
 
 #### 전체 서비스 시작
 ```bash
