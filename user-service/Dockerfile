@@ -23,7 +23,7 @@ RUN ./gradlew clean build -x test --no-daemon && \
     java -Djarmode=layertools -jar build/libs/*.jar extract
 
 # 2단계: 런타임 스테이지 (JRE 경량화)
-FROM amazoncorretto:17-jre
+FROM amazoncorretto:17
 WORKDIR /app
 
 # 2.1 curl과 bash 설치 (healthcheck 및 exec 접속용)
