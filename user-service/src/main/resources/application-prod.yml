@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8085}
+  port: ${SERVER_PORT:8082}
 
 logging:
   pattern:
@@ -16,7 +16,7 @@ logging:
 
 spring:
   application:
-    name: file-service
+    name: user-service
   jpa:
     hibernate:
       ddl-auto: none
@@ -26,12 +26,16 @@ spring:
         format_sql: true
         use_sql_comments: true # SQL 쿼리에 주석 추가
         highlight_sql: true
-  # RabbitMQ 설정 정보
   rabbitmq:
     host: ${RABBITMQ_HOST}
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DB_HOST}:3306/user_db
+    username: webuser
+    password: webuser
   h2:
     console:
       enabled: false
@@ -42,12 +46,8 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://discovery-service:8761/eureka
-
-  # 0번포트(랜덤포트)를 사용하게되면 애플리케이션을 여러개 실행했어도 Eureka서버에 1개만 실행되는 것처럼 보인다.
-  # 이를 방지하기 위해 사용하는 옵션(instance-id)
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    # Eureka Server로 heartbeat 전송하는 시간 (디폴트 30초)
     lease-renewal-interval-in-seconds: 10
     prefer-ip-address: true
 
@@ -56,8 +56,10 @@ management:
     web:
       exposure:
         include: refresh, health, beans, busrefresh, info, metrics, prometheus
-
-webdav:
-  username: "jihun"
-  password: "40102987"
-  base-url: "http://192.168.35.100/webdav"
+  # Micrometer 및 zipkin 설정
+  tracing:
+    sampling:
+      probability: 1.0  # 추적할 요청의 비율 설정 (1.0은 모든 요청 추적)
+    propagation:
+      consume: B3
+      produce: B3_MULTI
