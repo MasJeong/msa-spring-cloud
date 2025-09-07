@@ -156,6 +156,11 @@ services:
       - CONFIG_URI=http://config-service:8888
       - EUREKA_URI=http://discovery-service:8761/eureka
       - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       config-service:
@@ -181,6 +186,10 @@ services:
       - CONFIG_URI=http://config-service:8888
       - EUREKA_URI=http://discovery-service:8761/eureka
       - DB_HOST=mariadb
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       config-service:
