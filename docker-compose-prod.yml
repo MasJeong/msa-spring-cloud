@@ -104,6 +104,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
       - KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD}
     volumes:
       - ./keystore:/app/keystore:ro # 키스토어 읽기전용 마운트
