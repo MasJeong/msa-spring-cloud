@@ -352,12 +352,10 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 - [Spring Cloud 공식 문서](https://spring.io/projects/spring-cloud)
 - [Resilience4J 문서](https://resilience4j.readme.io/)
 - [Kafka 공식 문서](https://kafka.apache.org/documentation/)
-- [gRPC 도입 가이드](docs/GRPC_INTRODUCTION_GUIDE.md)
+<!-- - [gRPC 도입 가이드](docs/GRPC_INTRODUCTION_GUIDE.md) -->
 
 ## 👥 기여
 
 이슈 및 개선 제안은 언제든 환영합니다!
 
 ---
-
-**Made with ❤️ using Spring Cloud**
