@@ -340,11 +340,11 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 
 ### 중기 (3-6개월)
 - [ ] 로깅 중앙화 (ELK Stack)
-- [ ] 성능 테스트 및 부하 테스트
+<!-- - [ ] 성능 테스트 및 부하 테스트 -->
 - [ ] CQRS 패턴 도입 검토 (읽기/쓰기 모델 분리)
 
 ### 장기 (6개월 이상)
-- [ ] 서비스 메시 도입 검토 (Istio)
+<!-- - [ ] 서비스 메시 도입 검토 (Istio) -->
 - [ ] 자동 스케일링 구현
 
 ## 📚 참고 자료
