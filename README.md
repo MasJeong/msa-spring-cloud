@@ -1,6 +1,8 @@
 # MSA-Spring-Cloud 
 
-> 본 프로젝트는 학습 목적의 토이 프로젝트로 Spring Cloud 기반 마이크로서비스 아키텍처(MSA) 구현 프로젝트입니다.
+> 본 프로젝트는 학습 목적의 토이 프로젝트로 
+> Spring Cloud 기반 마이크로서비스 아키텍처(MSA) 구현 프로젝트입니다.
+
 
 ## 📌 프로젝트 개요
 
@@ -21,10 +23,12 @@
 - **운영 효율성**: 분산 추적 및 모니터링으로 장애 대응 시간 단축, 중앙화된 설정 관리로 운영 부담 감소
 - **비용 최적화**: 필요한 서비스만 스케일링하여 리소스 효율적 사용, 캐싱으로 DB 부하 감소
 
+
 ### 📚 상세 문서
 
-- **프로젝트 개발 노트(notion)**: https://nickel-painter-d6a.notion.site/msa-spring-cloud-190e2100a14b808a9e99c513edfd6a06
+- **프로젝트 개발 노트(notion)**: [Spring Cloud MSA Development Notes](https://nickel-painter-d6a.notion.site/msa-spring-cloud-190e2100a14b808a9e99c513edfd6a06)
 <!-- - **gRPC 도입 가이드**: [docs/GRPC_INTRODUCTION_GUIDE.md](docs/GRPC_INTRODUCTION_GUIDE.md) -->
+
 
 ## 🏗️ 아키텍처
 
@@ -78,6 +82,7 @@
 - **File Service** → 독립 서비스 (RabbitMQ 사용)
 - **모든 서비스** → Eureka (Service Discovery: User, Order, Catalog, Cart, File, API Gateway)
 
+
 ## ✨ 핵심 기능
 
 ### 1. 장애 격리 및 회복력 (Resilience)
@@ -93,10 +98,12 @@
   - 불필요한 재시도로 인한 리소스 낭비 방지
   - Fallback 메커니즘으로 사용자 경험 보장
 
+
 #### Timeout & Fallback
 - **설계 의도**: 외부 서비스 응답 지연 시 무한 대기 방지 및 기본 응답 제공
 - **구현 내용**: 외부 서비스 호출 타임아웃 6초 설정, 장애 시 기본값 반환
 - **실무 적용 장점**: 느린 응답으로 인한 전체 시스템 지연 방지, 사용자 대기 시간 최소화
+
 
 ### 2. 성능 최적화
 
@@ -110,6 +117,7 @@
   - 서비스 간 결합도 감소로 독립적 배포 가능
   - 트래픽 급증 시 이벤트 큐 버퍼링으로 시스템 안정성 확보
 
+
 #### 캐싱 (Redis)
 - **설계 의도**: 자주 조회되는 데이터를 메모리에 저장하여 DB 부하 감소
 - **구현 내용**: 세션 관리, 장바구니 데이터 캐싱
@@ -122,6 +130,7 @@
 - **구현 내용**: Redis 기반 토큰 버킷 알고리즘으로 API 요청 제한
 - **실무 적용 장점**: 악의적 공격 방지, 예상치 못한 비용 증가 방지
 
+
 ### 3. 보안
 
 #### JWT 인증
@@ -132,6 +141,7 @@
   - 토큰에 권한 정보 포함으로 매 요청 시 권한 검증 가능
   - 마이크로서비스 환경에서 서비스 간 인증 정보 공유 용이
   - 향후 개선: Refresh Token 도입으로 보안 강화 및 사용자 편의성 향상 계획
+
 
 #### RBAC (Spring Security)
 - **설계 의도**: 역할 기반 접근 제어로 세밀한 권한 관리
@@ -146,6 +156,7 @@
 - **구현 내용**: 인증 토큰 검증 및 헤더 처리
 - **실무 적용 장점**: 각 서비스에서 인증 로직 중복 구현 불필요, 보안 정책 변경 시 한 곳만 수정
 
+
 ### 4. 분산 시스템 관리
 
 #### Service Discovery (Eureka)
@@ -156,6 +167,7 @@
   - 수평 확장 시 무중단 서비스 추가
   - 장애 인스턴스 자동 제거로 가용성 향상
 
+
 #### Config Management
 - **설계 의도**: 중앙화된 설정 관리로 환경별 설정 분리 및 동적 갱신
 - **구현 내용**: Git 기반 설정 관리, Spring Cloud Bus를 통한 동적 갱신
@@ -164,6 +176,7 @@
   - 환경별(dev, staging, prod) 설정 분리로 관리 용이
   - 설정 변경 이력 추적 가능
 
+
 #### Distributed Tracing (Zipkin)
 - **설계 의도**: 분산 환경에서 요청 추적 및 성능 병목 지점 파악
 - **구현 내용**: Zipkin을 통한 분산 추적, Trace ID 기반 요청 추적
@@ -171,6 +184,7 @@
   - 서비스 간 호출 체인 전체 추적 가능
   - 성능 병목 지점 빠른 파악
   - 장애 발생 시 원인 분석 시간 단축
+
 
 ### 5. CI/CD 파이프라인
 
@@ -182,6 +196,7 @@
   - 일관된 배포 프로세스로 인적 오류 방지
   - 빠른 피드백으로 개발 생산성 향상
   - 롤백 자동화로 장애 대응 시간 단축
+
 
 ### 🛠️ 기술 스택
 
@@ -196,9 +211,11 @@
 - **Service Discovery**: Netflix Eureka
 - **API Gateway**: Spring Cloud Gateway
 
+
 #### Infrastructure & DevOps
 - **Containerization**: Docker, Docker Compose
 - **CI/CD**: Jenkins, 자동화된 빌드 및 배포 파이프라인
+
 
 #### Monitoring & Observability
 - **Distributed Tracing**: Zipkin
@@ -206,10 +223,12 @@
 - **Visualization**: Grafana
 - **Logging**: Structured Logging with Micrometer
 
+
 #### Security
 - **Authentication**: JWT
 - **Authorization**: Spring Security (RBAC)
 - **API Security**: API Gateway 필터링
+
 
 ### 📁 서비스 구성
 
@@ -224,6 +243,7 @@
 | **Cart Service** | 랜덤 | 장바구니 서비스 | 장바구니 CRUD, Redis 캐싱 |
 | **File Service** | 랜덤 | 파일 관리 서비스 | 파일 업로드/다운로드, WebDAV 연동 |
 
+
 ### 🛠️ 인프라 서비스
 
 | 서비스 | 포트        | 설명 | 용도 |
@@ -235,6 +255,7 @@
 | **Prometheus** | 9090      | 메트릭 수집 | 시스템 메트릭 수집 및 저장 |
 | **Grafana** | 3001      | 모니터링 대시보드 | 메트릭 시각화 및 알림 |
 
+
 ## 🚀 빠른 시작
 
 ### 1. 사전 요구사항
@@ -242,6 +263,7 @@
 - Docker & Docker Compose
 - Java 17+
 - Gradle
+
 
 ### 2. 서비스 시작
 
@@ -268,7 +290,9 @@ docker-compose -f docker-compose-local.yml up -d user-service order-service cata
 docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 ```
 
+
 ## 🔗 서비스 접속 정보
+
 
 ### 주요 서비스 URL
 - **Eureka Dashboard**: http://localhost:8761
@@ -284,24 +308,29 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 - **Order Service**: http://localhost:8000/order-service/**
 - **Catalog Service**: http://localhost:8000/catalog-service/**
 - **Cart Service**: http://localhost:8000/cart-service/**
-- **File Service**: http://localhost:8000/file-service/**
+- **File Service**: http://localhost:8000/file-service/** 
+
 
 ## 📊 모니터링 및 관찰성
+
 
 ### Prometheus 메트릭
 - 각 서비스의 `/actuator/prometheus` 엔드포인트에서 메트릭 수집
 - HTTP 요청 수, 응답 시간, 에러율 등 실시간 메트릭 수집
 - Prometheus UI에서 실시간 메트릭 확인 가능
 
+
 ### Grafana 대시보드
 - 기본 로그인: admin/admin
 - Prometheus 데이터 소스로 대시보드 구성
 - CPU, 메모리, 네트워크, API 응답 시간 등 시각화
 
+
 ### Zipkin 분산 추적
 - 분산 추적을 통한 서비스 간 호출 추적
 - 요청별 Trace ID로 전체 호출 체인 추적
 - 성능 병목 지점 분석 및 최적화
+
 
 ### Micrometer
 - Spring Boot Actuator와 연동
@@ -311,41 +340,51 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 
 ## 🐳 배포 및 인프라
 
+
 ### Docker
 - 각 서비스를 독립적인 Docker 컨테이너로 구성
 - Docker Compose를 통한 로컬 개발 환경 구성
 - 멀티 스테이지 빌드로 이미지 크기 최적화
+
 
 ### 환경 분리
 - **dev**: 로컬 개발 환경
 - **prod**: 프로덕션 환경
 - 프로파일별 설정 분리
 
+
 ## 🎓 학습 내용 및 트러블슈팅
+
 
 ### 주요 학습 내용
 1. **MSA 아키텍처 설계**: 서비스 분리 기준 및 경계 설계
 2. **이벤트 기반 아키텍처**: Kafka를 통한 비동기 처리 패턴
 3. **분산 트랜잭션**: Saga 패턴 고려 및 이벤트 기반 처리 방식
 
+
 ### 트러블슈팅 경험
 - **서비스 간 통신 지연**: OpenFeign 타임아웃 설정 및 Circuit Breaker 적용
 - **이벤트 순서 보장**: Kafka 파티셔닝 전략 수립
 
+
 ## 📈 향후 개선 계획
+
 
 ### 단기 (1-2개월)
 - [ ] gRPC 도입으로 서비스 간 통신 성능 개선
 - [ ] API 문서화 (Swagger/OpenAPI)
+
 
 ### 중기 (3-6개월)
 - [ ] 로깅 중앙화 (ELK Stack)
 <!-- - [ ] 성능 테스트 및 부하 테스트 -->
 - [ ] CQRS 패턴 도입 검토 (읽기/쓰기 모델 분리)
 
+
 ### 장기 (6개월 이상)
 <!-- - [ ] 서비스 메시 도입 검토 (Istio) -->
 - [ ] 자동 스케일링 구현
+
 
 ## 📚 참고 자료
 
@@ -353,6 +392,7 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 - [Resilience4J 문서](https://resilience4j.readme.io/)
 - [Kafka 공식 문서](https://kafka.apache.org/documentation/)
 <!-- - [gRPC 도입 가이드](docs/GRPC_INTRODUCTION_GUIDE.md) -->
+
 
 ## 👥 기여
 
