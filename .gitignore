@@ -4,3 +4,11 @@
 /prometheus-3.2.1/**
 /zipkin/**
 /git-local-repo
+
+# Build outputs
+**/bin/
+**/build/
+**/.gradle/
+**/out/
+**/target/
+*.class

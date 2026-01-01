@@ -38,3 +38,5 @@ out/
 
 ### security ###
 /src/main/resources/apiEncryptionKey.jks
+
+*.class

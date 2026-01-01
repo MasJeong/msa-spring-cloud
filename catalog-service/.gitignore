@@ -35,3 +35,5 @@ build/
 .vscode/
 
 /out/production/**
+bin/
+*.class
