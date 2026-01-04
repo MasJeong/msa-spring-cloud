@@ -1,4 +1,4 @@
-package com.example.userservice.api.user.client;
+package com.example.userservice.api.user.client.feign;
 
 import com.example.userservice.api.user.vo.ResponseOrder;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+//@FeignClient(name = "order-service", configuration = FeignErrorDecoder.class, url = "${order-service-url}")
 @FeignClient(name = "order-service")
 public interface OrderServiceClient {
   
