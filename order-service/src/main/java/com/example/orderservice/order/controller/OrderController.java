@@ -2,7 +2,6 @@ package com.example.orderservice.order.controller;
 
 import com.example.orderservice.com.enums.KafkaTopics;
 import com.example.orderservice.com.msgqueue.KafkaProducer;
-import com.example.orderservice.com.msgqueue.OrderProducer;
 import com.example.orderservice.order.domain.OrderEntity;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.service.OrderService;
@@ -31,8 +30,8 @@ public class OrderController {
     /** 객체간 매핑 mapper */
     private final ModelMapper modelMapper;
 
-    /** 주문 producer */
-    private final OrderProducer orderProducer;
+//    /** 주문 producer */
+//    private final OrderProducer orderProducer;
 
     /** Kafka producer */
     private final KafkaProducer kafkaProducer;
@@ -69,8 +68,8 @@ public class OrderController {
         orderDto.setUserId(userId);
 
         /* JPA */
-//        OrderDto createdOrderDto = orderService.createOrder(orderDto);
-//        ResponseOrder responseOrder = modelMapper.map(createdOrderDto, ResponseOrder.class);
+        OrderDto createdOrderDto = orderService.createOrder(orderDto);
+        ResponseOrder responseOrder = modelMapper.map(createdOrderDto, ResponseOrder.class);
 
         orderDto.setOrderId(UUID.randomUUID().toString());
         orderDto.setTotalPrice(orderDetails.getQty() * orderDetails.getUnitPrice());
@@ -82,9 +81,8 @@ public class OrderController {
         kafkaProducer.send(KafkaTopics.CATALOG_STOCK_UPDATE.getTopicName(), orderDto);
 
         // 분산된 DB인 경우 kafka connect sink-connector를 사용하여 동기화
-        orderProducer.send(KafkaTopics.ORDER_INSERT.getTopicName(), orderDto);
-
-        ResponseOrder responseOrder = modelMapper.map(orderDto, ResponseOrder.class);
+//        orderProducer.send(KafkaTopics.ORDER_INSERT.getTopicName(), orderDto);
+//        ResponseOrder responseOrder = modelMapper.map(orderDto, ResponseOrder.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }

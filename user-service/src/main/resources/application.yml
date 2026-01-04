@@ -78,3 +78,10 @@ management:
 #token:
 #  expiration_time: ${TOKEN_EXPIRATION_TIME}
 #  secret: ${TOKEN_SECRET}
+
+# gRPC Client 설정
+grpc:
+  client:
+    order-service:
+      address: 'discovery:///order-service'  # Eureka를 통한 서비스 디스커버리
+      negotiation-type: plaintext

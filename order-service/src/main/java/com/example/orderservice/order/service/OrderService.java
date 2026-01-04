@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class OrderService {
 
     private final ModelMapper modelMapper;
@@ -26,6 +25,7 @@ public class OrderService {
      * @param orderDto 주문 정보
      * @return 주문 정보
      */
+    @Transactional
     public OrderDto createOrder(OrderDto orderDto) {
         orderDto.setOrderId(UUID.randomUUID().toString());
         orderDto.setTotalPrice(orderDto.getQty() * orderDto.getUnitPrice());
@@ -42,6 +42,7 @@ public class OrderService {
      * @param orderId 주문 ID
      * @return 주문 상세정보
      */
+    @Transactional(readOnly = true)
     public OrderDto getOrderByOrderId(String orderId) {
         Optional<OrderEntity> opOrder = orderRepository.findByOrderId(orderId);
         OrderEntity order = opOrder.orElseThrow();
@@ -55,6 +56,7 @@ public class OrderService {
      * @param userId 사용자 ID
      * @return 사용자 주문 목록
      */
+    @Transactional(readOnly = true)
     public List<OrderEntity> getOrdersByUserId(String userId) {
         return orderRepository.findByUserId(userId);
     }

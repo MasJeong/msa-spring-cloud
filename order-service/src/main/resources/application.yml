@@ -55,3 +55,8 @@ management:
     zipkin:
       tracing:
         endpoint: "http://localhost:9411/api/v2/spans"
+
+# gRPC Server 설정
+grpc:
+  server:
+    port: 9090  # gRPC 서버 포트 (Eureka를 통해 자동 등록됨)

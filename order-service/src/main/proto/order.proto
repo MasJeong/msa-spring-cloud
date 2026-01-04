@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package com.example.orderservice.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.example.orderservice.grpc";
+option java_outer_classname = "OrderProto";
+
+service OrderService {
+  rpc GetOrdersByUserId (GetOrdersRequest) returns (GetOrdersResponse); // 사용자별 주문 목록 조회
+}
+
+// 주문 조회 요청
+message GetOrdersRequest {
+  string user_id = 1;
+}
+
+// 주문 조회 응답
+message GetOrdersResponse {
+  repeated Order orders = 1;
+}
+
+// 주문 정보
+message Order {
+  string order_id = 1;
+  string user_id = 2;
+  string product_id = 3;
+  int32 qty = 4;
+  int32 unit_price = 5;
+  int32 total_price = 6;
+  string created_at = 7;
+}
