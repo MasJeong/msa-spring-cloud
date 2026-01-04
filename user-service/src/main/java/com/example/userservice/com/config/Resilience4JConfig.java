@@ -24,7 +24,7 @@ public class Resilience4JConfig {
      * <p>
      * from CLOSED to OPEN:
      * - 실패율 50% 초과 (failureRateThreshold)
-     * - 느린 호출율 50% 초과 (slowCallRateThreshold)
+     * - 느린 호출율 30% 초과 (slowCallRateThreshold)
      * -> 느린 호출 기준 시간 5초
      * <p>
      * from OPEN to HALF-OPEN:
