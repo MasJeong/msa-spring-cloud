@@ -30,11 +30,11 @@ spring:
                       2+sSld9Mzdnt9HAgrKI2rumygneaPN3GLkzZRB6vhEfP0XrdVfnqsC1K8l/zjP7DwGR7gnz2nlk+OX1aadxNuKdC9/IlQ\
                       4n1s2JfTys1nFejG2Q2ojnALWTpA1sBqvbQaudJyD/+jVWrERbV5DTCv0Y5XP3QnNxhxl16WAF7iDDmpTC3EvTwdDuZs9\
                       lI5Ey0bfTC5HvG6SZkcBfqk="
-          password: "{cipher}AQCADK7tH/SAeFIHCox8p2JH08dTzPZXVg8nV5iCT1a5z+mkCAJCIiMVOWihyiRJijaUAzeMN9eR3MWnGYDvSYzVL\
-                      3Vc9alhoEzEEnnf4zXA9s/1p0wtcXfVKuTBxQ5ZNWywE8scgRZvwsiK7S8Dl4rgZp9jC/3qk7uLHbR2EQoWkWtbiloBYEppe\
-                      Yg08cd2rwLc3O34vRIv4GVhhSZTukFCScO2vFU10BZMiMaqD0LodrHZOpU6OOeNakjUCEp03PhhB08aoEkyJbylw1UI/ChfG\
-                      Kd2ZblbgX12c+aO7yVzArz2PnnZRasrHL1Sv+bcZhrXeWGHAxPAdCgJSdNq8ZLOcCAgc/FqT4rQmtoXqrLLP6SfSbTB5jATK\
-                      t115StzLrydWqQr0a+cewtENrCfkVW0MKzHX58qoVnTYjjM/JP8LA=="
+          password: "{cipher}AQAAX2yOAazKtEz8qJyo1Gjfbej2+UCv7CgD1/zZwqRPt/7Vzs0w5bXFKz0G2uZBQ5Z0GUMQPkamC4rixXz0LZA\
+                      x9gZ3Ca30jzkJc1rdVnxjORxH301cvO6fsNtm1rhWLGvi117ZGKIxmpecSz5jV++GoXa5kiopqzJzAyhxjmfhQAkHc/enh\
+                      S67jkHb102Rh4Bbk4tXTbC/yTJCMb9INPwC4JXzYaQkWYwvUz5UPfT7XDXlygGDlb1ePMI0u0g9H38pfdsit3teDlb2IGW\
+                      Jlh4mIHSPalHLK85uHzWMPGU+L+Mjookd2Lh9nok2VycPn6H84+lWmJ/qtJvo6bViEs8TtIjsj3sPvzchYDC6CPqRGwb0i\
+                      v8+Mq4C99rWzjnUgop7Yr5GT1IJCa1/+FfoxrEGTLmVF+LEJQ9HMQUaon+BlA=="
 
 # actuator 설정
 management:
