@@ -2,8 +2,10 @@ package com.example.userservice.api.user.service;
 
 import com.example.userservice.api.role.repository.RoleRepository;
 import com.example.userservice.api.user.domain.User;
+import com.example.userservice.api.user.dto.UserAddressDto;
 import com.example.userservice.api.user.dto.UserDto;
 import com.example.userservice.api.user.repository.UserRepository;
+import com.example.userservice.api.user.vo.ResponseUserAddress;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -99,20 +101,40 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 사용자 및 주문 정보 조회
+     * 사용자 및 주문 정보 조회 (역할 및 주소 포함)
      *
-     * @param userId 사용자 아이디
-     * @return 사용자 및 주문 정보
+     * @param userId 사용자 아이디 (UUID)
+     * @return 사용자 및 주문 정보 (역할 및 주소 포함)
      */
     @Transactional(readOnly = true)
     public UserDto getUserByUserId(String userId) {
-        User user = userRepository.findByUserId(userId);
+        UserDto userDto = userRepository.findUserDtoByUserId(userId);
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found. ");
+        if (userDto == null) {
+            throw new UsernameNotFoundException("User not found: " + userId);
         }
 
-        return modelMapper.map(user, UserDto.class);
+        // 사용자 주소 목록 조회
+        List<UserAddressDto> addressDtos = userRepository.findUserAddressDtoListByUserId(userDto.getId());
+
+        // DTO → VO 변환
+        List<ResponseUserAddress> addresses = addressDtos.stream()
+                .map(dto -> ResponseUserAddress.builder()
+                        .id(dto.getId())
+                        .addressName(dto.getAddressName())
+                        .recipientName(dto.getRecipientName())
+                        .zipCode(dto.getZipCode())
+                        .baseAddress(dto.getBaseAddress())
+                        .detailAddress(dto.getDetailAddress())
+                        .phoneNumber(dto.getPhoneNumber())
+                        .isDefault(dto.getIsDefault())
+                        .createdAt(dto.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        userDto.setAddresses(addresses);
+
+        return userDto;
     }
 
     /**

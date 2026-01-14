@@ -89,7 +89,6 @@ public class UserController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
-
         UserDto userDto = userService.getUserByUserId(userId);
 
         log.debug("before call orders microservice (gRPC)");

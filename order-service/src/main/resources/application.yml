@@ -59,4 +59,4 @@ management:
 # gRPC Server 설정
 grpc:
   server:
-    port: 9090  # gRPC 서버 포트 (Eureka를 통해 자동 등록됨)
+    port: 9091  # gRPC 서버 포트 (Eureka를 통해 자동 등록됨)

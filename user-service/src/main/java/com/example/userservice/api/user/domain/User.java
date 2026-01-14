@@ -39,9 +39,15 @@ public class User extends BaseDomain implements Persistable<Long> {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<UserRole> userRoles = new ArrayList<>();
+
+    /** 사용자 주소 목록 */
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id", referencedColumnName = "ID")
+    @Builder.Default
+    private List<UserAddress> addresses = new ArrayList<>();
 
     @Override
     public boolean isNew() {
