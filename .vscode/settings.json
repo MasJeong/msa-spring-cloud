@@ -1,0 +1,11 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "editor.minimap.enabled": true,
+    "editor.minimap.showSlider": "always",
+    "workbench.colorCustomizations": {
+         "tab.activeBackground": "#4a9e6a80",
+         "minimapSlider.background": "#4a9e6a80",
+         "minimapSlider.hoverBackground": "#5ab87a80",
+         "minimapSlider.activeBackground": "#6ac88a80"
+    }
+}
