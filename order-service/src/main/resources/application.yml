@@ -19,6 +19,10 @@ spring:
     producer:
 #      bootstrap-servers: ${BOOTSTRAP-SERVERS} # 2025-04-13 k8s 설정을 위한 임시 속성
       bootstrap-servers: 127.0.0.1:9094
+    consumer:
+      bootstrap-servers: 127.0.0.1:9094
+      group-id: order-service-group
+      auto-offset-reset: earliest
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/order_db

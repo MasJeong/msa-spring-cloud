@@ -17,6 +17,8 @@ spring:
   application:
     name: catalog-service
   kafka:  # 2025-04-13 k8s 설정을 위한 임시 속성
+    producer:
+      bootstrap-servers: 127.0.0.1:9094
     consumer:
 #      bootstrap-servers: ${BOOTSTRAP-SERVERS} # Kafka 클러스터에 대한 초기 연결에 사용할 호스트 : 포트 목록
       bootstrap-servers: 127.0.0.1:9094

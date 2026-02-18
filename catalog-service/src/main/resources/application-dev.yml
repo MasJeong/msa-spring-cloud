@@ -17,6 +17,8 @@ spring:
   application:
     name: catalog-service
   kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
       group-id: consumer_group01 # Group id
