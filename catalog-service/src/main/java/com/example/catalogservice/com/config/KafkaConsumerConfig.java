@@ -14,6 +14,9 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * catalog-service의 Kafka consumer 설정을 담당한다.
+ */
 @EnableKafka
 @RequiredArgsConstructor
 @Configuration

@@ -1,4 +1,4 @@
-package com.example.orderservice.com.msgqueue;
+package com.example.catalogservice.com.msgqueue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 주문 서비스에서 Kafka 메시지를 발행하는 공통 producer wrapper.
+ * catalog-service에서 Kafka 이벤트 발행을 담당하는 프로듀서.
  */
 @Slf4j
 @Service
@@ -20,10 +20,10 @@ public class KafkaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     /**
-     * 객체를 JSON 문자열로 직렬화해 지정한 토픽으로 전송한다.
+     * 객체를 JSON으로 직렬화해 지정 토픽으로 전송한다.
      *
      * @param topic   전송 대상 Kafka 토픽
-     * @param payload 직렬화할 메시지 객체
+     * @param payload 직렬화 대상 메시지
      */
     public void send(String topic, Object payload) {
         ObjectMapper mapper = new ObjectMapper();
@@ -41,6 +41,6 @@ public class KafkaProducer {
         } catch (Exception ex) {
             throw new IllegalStateException("Kafka send failed", ex);
         }
-        log.info("Kafka Producer sent data from the Order MicroService: {}", payload);
+        log.info("Kafka Producer sent data from the Catalog MicroService: {}", payload);
     }
 }

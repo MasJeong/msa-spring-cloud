@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * 주문 엔티티의 생성, 조회, 보상(취소) 로직을 담당한다.
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -21,7 +24,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     /**
-     * 주문 정보 저장
+     * 주문 정보를 생성하고 주문 ID 및 합계 금액을 계산해 저장한다.
      * @param orderDto 주문 정보
      * @return 주문 정보
      */
@@ -38,7 +41,30 @@ public class OrderService {
     }
 
     /**
-     * 주문 상세정보 조회
+     * 분산 트랜잭션 보상 단계에서 주문을 삭제해 롤백한다.
+     *
+     * @param orderId 주문 ID
+     */
+    @Transactional
+    public void cancelOrder(String orderId) {
+        orderRepository.findByOrderId(orderId).ifPresent(orderRepository::delete);
+    }
+
+    /**
+     * 주문 ID로 주문 단건을 조회한다.
+     *
+     * @param orderId 주문 ID
+     * @return 주문 DTO
+     */
+    @Transactional(readOnly = true)
+    public OrderDto getOrder(String orderId) {
+        OrderEntity order = orderRepository.findByOrderId(orderId).orElseThrow();
+
+        return modelMapper.map(order, OrderDto.class);
+    }
+
+    /**
+     * 주문 ID로 주문 상세 정보를 조회한다.
      * @param orderId 주문 ID
      * @return 주문 상세정보
      */
@@ -51,7 +77,7 @@ public class OrderService {
     }
 
     /**
-     * 사용자 주문 목록 조회
+     * 사용자 ID 기준으로 주문 목록을 조회한다.
      *
      * @param userId 사용자 ID
      * @return 사용자 주문 목록
