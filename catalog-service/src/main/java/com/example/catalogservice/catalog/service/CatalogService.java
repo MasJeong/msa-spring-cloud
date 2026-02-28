@@ -47,7 +47,6 @@ public class CatalogService {
         }
 
         entity.setStock(entity.getStock() - qty);
-        catalogRepository.save(entity);
 
         return entity.getStock();
     }
@@ -69,7 +68,6 @@ public class CatalogService {
         }
 
         entity.setStock(entity.getStock() + qty);
-        catalogRepository.save(entity);
 
         return entity.getStock();
     }

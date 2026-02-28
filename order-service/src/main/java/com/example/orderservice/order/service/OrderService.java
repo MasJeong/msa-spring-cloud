@@ -47,7 +47,7 @@ public class OrderService {
      */
     @Transactional
     public void cancelOrder(String orderId) {
-        orderRepository.findByOrderId(orderId).ifPresent(orderRepository::delete);
+        orderRepository.deleteByOrderId(orderId);
     }
 
     /**
