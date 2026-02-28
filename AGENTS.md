@@ -1,69 +1,39 @@
 # AGENTS.md
 
-Repository guidance for autonomous coding agents working in `SPRING_CLOUD_MSA`.
+Repository guidance for coding agents working in `SPRING_CLOUD_MSA`.
 
-## Scope and architecture
+## 1) Workspace and Scope
 
-- This is a multi-repo-style workspace with **independent Gradle modules**.
-- There is no root Gradle wrapper for all services; run commands inside each service directory.
-- Main services: `user-service`, `order-service`, `catalog-service`, `cart-service`, `file-service`, `apigateway-service`, `config-service`, `discoveryservice`.
-- Infra/dev orchestration is done with Docker Compose from repo root.
+- This repo is a multi-module workspace with independent Gradle wrappers per service.
+- There is no root Gradle wrapper for all modules.
+- Core modules: `user-service`, `order-service`, `catalog-service`, `cart-service`, `file-service`, `apigateway-service`, `config-service`, `discoveryservice`.
+- Prefer module-local changes. Do not refactor unrelated services in one task.
 
-## External agent rule files
+## 2) Rule Files (Cursor / Copilot)
 
-- `.cursorrules`: not found.
-- `.cursor/rules/`: not found.
-- `.github/copilot-instructions.md`: not found.
-- This file is the authoritative agent guideline until those files are added.
+- `.cursorrules`: not found
+- `.cursor/rules/`: not found
+- `.github/copilot-instructions.md`: not found
+- Use this file as the authoritative agent rule set for now.
 
-## Required workflow defaults
+## 3) Build/Test Commands (Verified)
 
-- Prefer **small, module-local changes**; do not refactor unrelated modules.
-- Use each module's `./gradlew` wrapper (not system `gradle`) for reproducibility.
-- Validate with compile/tests in the module you changed before finalizing.
-- Do not introduce new build plugins (Spotless/Checkstyle/etc.) unless explicitly requested.
+Run commands from the target module directory unless noted.
 
-## Build, test, and run commands
+### Core Gradle commands
 
-All commands below are run from a module directory (example: `user-service/`).
-
-### Common module commands
-
-- Install wrapper deps cache (used in Dockerfiles):
+- Download dependencies (used in Docker build cache):
   - `./gradlew dependencies --no-daemon`
-- Build artifact without tests (current Docker build pattern):
+- Build without tests (current Docker pattern):
   - `./gradlew clean build -x test --no-daemon`
 - Run all tests in a module:
   - `./gradlew test`
-- Run one test class:
+- Run a single test class:
   - `./gradlew test --tests 'com.example.orderservice.OrderServiceApplicationTests'`
-- Run one test method:
+- Run a single test method:
   - `./gradlew test --tests 'com.example.orderservice.OrderServiceApplicationTests.contextLoads'`
 
-### Service startup (repo root)
-
-- Start everything:
-  - `docker-compose up -d`
-- Local staged startup:
-  - `docker-compose -f docker-compose-local.yml up -d mariadb redis kafka rabbitmq`
-  - `docker-compose -f docker-compose-local.yml up -d config-service discovery-service`
-  - `docker-compose -f docker-compose-local.yml up -d apigateway-service`
-  - `docker-compose -f docker-compose-local.yml up -d user-service order-service catalog-service cart-service file-service`
-  - `docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana`
-
-## Command caveats and gotchas
-
-- `jar { enabled = false }` is set in all module `build.gradle` files (plain jar disabled).
-- Test task exists in all modules (`tasks.named('test') { useJUnitPlatform() }`).
-- Tests are globally disabled in **some modules** via `tasks.withType(Test) { enabled = false }`:
-  - `user-service/build.gradle`
-  - `file-service/build.gradle`
-- For those modules, `./gradlew test` will not execute tests until that block is changed.
-- Do not assume a lint command exists; no Spotless/Checkstyle/PMD/Jacoco plugin configuration was found.
-
-## Module command quick map
-
-From repo root, use one of these patterns:
+### From repo root (module wrapper map)
 
 - `./user-service/gradlew <task>`
 - `./order-service/gradlew <task>`
@@ -74,101 +44,109 @@ From repo root, use one of these patterns:
 - `./config-service/gradlew <task>`
 - `./discoveryservice/gradlew <task>`
 
-## Code style and structure conventions
+### Local infra startup (repo root)
 
-### Language and platform
+- Full startup:
+  - `docker-compose up -d`
+- Staged startup:
+  - `docker-compose -f docker-compose-local.yml up -d mariadb redis kafka rabbitmq`
+  - `docker-compose -f docker-compose-local.yml up -d config-service discovery-service`
+  - `docker-compose -f docker-compose-local.yml up -d apigateway-service`
+  - `docker-compose -f docker-compose-local.yml up -d user-service order-service catalog-service cart-service file-service`
+  - `docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana`
 
-- Java 17 toolchain across modules.
-- Spring Boot 3.3.x and Spring Cloud 2023.0.x family.
-- JUnit 5 platform (`useJUnitPlatform`) for tests.
+## 4) Build/Test Caveats
 
-### Package and layering
+- `jar { enabled = false }` is configured across service modules.
+- `user-service` and `file-service` disable tests via `tasks.withType(Test) { enabled = false }`.
+- `catalog-service/build.gradle` has `useJUnitPlatform()` commented in the `test` task block.
+- No verified lint/format plugins configured globally (Spotless, Checkstyle, PMD, JaCoCo not found as active standards).
+- `order-service` build includes gRPC proto generation; local env plugin executability can fail at `generateProto`.
 
-- Base package style: `com.example.<service>...`.
-- Common layering pattern by domain:
-  - `controller` (HTTP entrypoint)
+## 5) Technology Baseline
+
+- Java 17 toolchain
+- Spring Boot 3.3.x family
+- Spring Cloud 2023.0.x family
+- JPA/Hibernate with `jakarta.persistence`
+- Kafka for async integration
+- JUnit 5 style test setup in enabled modules
+
+## 6) Code Organization Conventions
+
+- Base package shape: `com.example.<service>...`
+- Common layers:
+  - `controller` (HTTP boundary)
   - `service` (business logic)
   - `repository` (persistence)
-  - `domain` (JPA entities)
-  - `dto` and `vo` (transport objects)
-- Keep cross-service integration code in dedicated subpackages (`client`, `msgqueue`, `config`, `security`).
+  - `domain` (entities)
+  - `dto` / `vo` (transport objects)
+  - `com.msgqueue` / `com.config` / `com.security` for integration and infra concerns
 
-### Imports and formatting
+## 7) Import, Formatting, and Structure
 
 - Use explicit imports; avoid wildcard imports.
-- Typical import grouping in current code:
-  1. project imports (`com.example...`)
-  2. Lombok
-  3. framework/third-party (`org.springframework...`, etc.)
-  4. JDK (`java...`)
-- Keep 4-space indentation and standard brace/newline formatting.
-- Javadoc/KDoc-style comments are used on public APIs and important methods; follow existing tone.
+- Keep import groups consistent: project -> lombok -> framework/third-party -> JDK.
+- Use 4-space indentation in Java source.
+- Keep methods short and purpose-focused.
+- Keep braces/newlines consistent with existing files.
+- Use Javadoc only when it clarifies public behavior or non-obvious intent.
 
-### Naming conventions
+## 8) Naming Conventions
 
 - Controllers: `*Controller`
 - Services: `*Service`
 - Repositories: `*Repository`
-- Entities: `*Entity` (except when aggregate name itself is used, e.g. `User`)
+- Entities: usually `*Entity` (some aggregates intentionally use plain names, for example `User`)
 - DTOs: `*Dto`
-- Response/request objects: `Response*`, `Request*`
-- Enum/constants grouped under `enums` or `constants` packages.
+- Request/Response VOs: `Request*`, `Response*`
+- Event payloads: `*Event`, `*EventType`
+- Topic enum wrappers: `KafkaTopics`
 
-### Dependency injection and annotations
+## 9) Dependency Injection and Annotations
 
-- Prefer constructor injection via Lombok `@RequiredArgsConstructor` with `final` fields.
-- Use Spring stereotypes explicitly: `@RestController`, `@Service`, `@Configuration`, `@Repository`.
-- Use `@Slf4j` for logging instead of manual logger creation.
+- Prefer constructor injection with `@RequiredArgsConstructor` and `final` fields.
+- Use explicit stereotypes: `@RestController`, `@Service`, `@Configuration`, `@Repository`.
+- Use `@Transactional` on write methods, `@Transactional(readOnly = true)` on read methods.
+- Use `@Slf4j` + parameterized logging.
 
-### DTO/entity mapping
+## 10) Error Handling and Logging
 
-- Model mapping is commonly handled via `ModelMapper`.
-- Convert entities to response VOs in controller/service boundaries.
-- Avoid exposing JPA entities directly from controller responses.
+- Do not swallow exceptions.
+- At HTTP boundaries, use meaningful status responses (`ResponseStatusException` or `ResponseEntity`).
+- In async/Kafka flows, log enough correlation context (`orderId`, `productId`, `eventType`, reason).
+- Catch narrow exception types first; avoid broad catch unless integrating with external boundaries.
+- If interruption is caught, restore thread interrupt status.
 
-### Persistence and domain modeling
+## 11) Readability and Clean Code Rules
 
-- JPA annotations use `jakarta.persistence` namespace.
-- Keep entity relationship annotations explicit (`@OneToMany`, `@JoinColumn`, etc.).
-- Prefer descriptive column constraints (`nullable`, `length`, `unique`) in entities.
+- Prefer clear names over comments.
+- Keep one method = one responsibility.
+- Extract duplicated logic into private helpers when duplication appears twice or more.
+- Keep controller logic thin; business rules belong in services.
+- Prefer immutable inputs/outputs where practical.
+- Avoid hidden side effects; make state transitions explicit.
+- Validate inputs near boundaries, fail fast with clear messages.
+- Keep event contracts stable; avoid ad-hoc payload changes without coordinated consumer updates.
 
-### Error handling
+## 12) Testing Guidance for Agents
 
-- Do not swallow exceptions silently.
-- For HTTP boundary failures, return meaningful status codes (`ResponseStatusException` or `ResponseEntity` statuses).
-- For async/event flows (Kafka), log enough context (`orderId`, `productId`, reason) and apply compensation when implemented.
-- Keep catch blocks narrow when possible; only use broad `Exception` catch at integration boundaries with explicit fallback.
+- Minimum expectation after edits: module compile/build command succeeds.
+- Run tests where enabled; if disabled by build script, report that clearly.
+- For async/Kafka behavior, prefer deterministic assertions over sleeps.
+- Add focused tests near changed modules; do not add unrelated broad test refactors.
 
-### Logging
+## 13) Agent Execution Checklist
 
-- Use parameterized logging (`log.info("... {}", value)`) not string concatenation.
-- Prefer `debug` for high-volume trace logs, `info` for business events, `warn/error` for abnormal paths.
-- Preserve traceability fields already configured in logging patterns (trace/span IDs via observability stack).
+- Identify target module and run commands in that module.
+- Verify changed code follows package/layer naming patterns.
+- Verify error handling and logs include enough runtime context.
+- Run `./gradlew clean build -x test --no-daemon` in affected modules.
+- Run `./gradlew test` when the module test task is active.
+- Summarize caveats (disabled tests, env-specific build blockers) in final report.
 
-### Security and API behavior
+## 14) When Unsure
 
-- Follow current stateless security patterns in `user-service` and gateway filters.
-- Preserve existing authorization annotations (`@PreAuthorize`) and request matcher behavior.
-- Any auth/role change should include endpoint-level verification.
-
-### Testing conventions
-
-- Baseline test style uses `@SpringBootTest` and context-load tests per service.
-- Keep tests under `src/test/java` mirroring production package layout.
-- If adding focused service/repository tests, reuse existing test support classes where present.
-- When tests are disabled by build script in a module, document that limitation in PR notes.
-
-## Agent execution checklist
-
-- Identify target module first.
-- Run `./gradlew clean build -x test --no-daemon` for compile safety.
-- Run `./gradlew test` where tests are enabled.
-- If single-test validation is needed, use `--tests` class/method filters.
-- Do not claim lint/format pass unless a real lint tool is added and executed.
-- Keep changes consistent with package/layering conventions above.
-
-## When uncertain
-
-- Prefer matching nearest existing implementation in the same module.
-- Do not propagate patterns from one module to all modules without checking local differences.
-- Call out module-specific caveats (especially test-task disablement) in your final notes.
+- Follow the nearest existing pattern in the same module first.
+- Prefer behavior-preserving refactors over architectural rewrites.
+- Document any module-specific limitations encountered during verification.
