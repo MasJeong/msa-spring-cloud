@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * 주문 서비스에서 Kafka 메시지를 발행하는 공통 producer wrapper.
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * 객체를 JSON 문자열로 직렬화해 지정한 토픽으로 전송한다.
@@ -26,11 +29,10 @@ public class KafkaProducer {
      * @param payload 직렬화할 메시지 객체
      */
     public void send(String topic, Object payload) {
-        ObjectMapper mapper = new ObjectMapper();
         String jsonInString = "";
 
         try {
-            jsonInString = mapper.writeValueAsString(payload);
+            jsonInString = objectMapper.writeValueAsString(payload);
         } catch (JsonProcessingException e) {
             log.error("Error parsing Kafka payload:", e);
             throw new IllegalStateException("Failed to convert Kafka payload to JSON", e);
@@ -38,7 +40,10 @@ public class KafkaProducer {
 
         try {
             kafkaTemplate.send(topic, jsonInString).get(3, TimeUnit.SECONDS);
-        } catch (Exception ex) {
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Kafka send interrupted", ex);
+        } catch (ExecutionException | TimeoutException ex) {
             throw new IllegalStateException("Kafka send failed", ex);
         }
         log.info("Kafka Producer sent data from the Order MicroService: {}", payload);
