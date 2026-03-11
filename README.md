@@ -18,81 +18,43 @@
 flowchart TB
     C[Client] --> GW[API Gateway<br/>:8000]
 
+    GW --> BIZ[Business Services<br/>User / Order / Catalog / Cart / File]
+
     subgraph Platform[Platform Services]
       CFG[Config Service<br/>:8888]
       DSC[Discovery Service<br/>:8761]
     end
 
-    subgraph Business[Business Services]
-      US[User Service<br/>:8082]
-      OS[Order Service<br/>:8083]
-      CS[Catalog Service<br/>:8081]
-      CRT[Cart Service<br/>:8084]
-      FS[File Service<br/>:8085]
+    subgraph DataMsg[Data and Messaging]
+      DB[(MariaDB)]
+      REDIS[(Redis)]
+      KAFKA[(Kafka)]
+      RABBIT[(RabbitMQ)]
+      FILEVOL[(File Volume)]
     end
 
-    subgraph Infra[Infrastructure]
-      DB[(MariaDB<br/>:3306)]
-      REDIS[(Redis<br/>:6379)]
-      KAFKA[(Kafka<br/>:9092)]
-      RABBIT[(RabbitMQ<br/>:5672 / 15672)]
-      ZIPKIN[Zipkin<br/>:9411]
-      PROM[Prometheus<br/>:9090]
-      GRAF[Grafana<br/>:3001]
-      FILEVOL[(native-file-repo<br/>volume)]
+    subgraph Obs[Observability]
+      ZIPKIN[Zipkin]
+      PROM[Prometheus]
+      GRAF[Grafana]
     end
 
-    CFG -. config .-> US
-    CFG -. config .-> OS
-    CFG -. config .-> CS
-    CFG -. config .-> CRT
-    CFG -. config .-> FS
     CFG -. config .-> GW
-    CFG -. config .-> DSC
-
-    US --> DSC
-    OS --> DSC
-    CS --> DSC
-    CRT --> DSC
-    FS --> DSC
+    CFG -. config .-> BIZ
+    BIZ --> DSC
     GW --> DSC
 
-    GW --> US
-    GW --> OS
-    GW --> CS
-
-    US --> DB
-    OS --> DB
-    CS --> DB
-    FS --> DB
-    CRT --> REDIS
+    BIZ --> DB
+    BIZ --> REDIS
+    BIZ --> KAFKA
+    BIZ --> RABBIT
+    BIZ --> FILEVOL
     GW --> REDIS
 
-    OS --> KAFKA
-    KAFKA --> CS
-    CS --> KAFKA
-    KAFKA --> OS
-
-    CFG --> RABBIT
-    GW --> RABBIT
-    US --> RABBIT
-    OS --> RABBIT
-    FS --> RABBIT
-
-    FS --> FILEVOL
-
-    US --> ZIPKIN
-    OS --> ZIPKIN
-    CS --> ZIPKIN
-    CRT --> ZIPKIN
-    FS --> ZIPKIN
+    BIZ --> ZIPKIN
     GW --> ZIPKIN
-
     PROM --> GW
-    PROM --> CFG
-    PROM --> DSC
-    PROM --> REDIS
-    PROM --> KAFKA
+    PROM --> BIZ
     GRAF --> PROM
 ```
 
