@@ -1,6 +1,6 @@
 # MSA-Spring-Cloud
 
-> Spring Cloud 기반 마이크로서비스 아키텍처(MSA)를 학습하고, 실무형 운영 요소(비동기 이벤트, 장애 격리, 관측성)를 통합한 포트폴리오 프로젝트입니다.
+> Spring Cloud 기반 마이크로서비스 아키텍처(MSA)를 구현하고, 서비스 운영에 필요한 비동기 처리, 장애 대응, 관측 환경을 함께 구성한 포트폴리오 프로젝트입니다.
 
 ## 프로젝트 한눈에 보기
 
@@ -8,9 +8,9 @@
 - 핵심 도메인: User, Order, Catalog, Cart, File
 - 비동기 통신: Kafka (Order <-> Catalog 이벤트 흐름)
 - 운영 구성: Redis, RabbitMQ(Spring Cloud Bus), Zipkin, Prometheus, Grafana
-- 실행 기준: `docker-compose-local.yml` (개발), `docker-compose-prod.yml` (배포 템플릿)
+- 실행 기준: `docker-compose-local.yml`, `docker-compose-prod.yml`
 
-## 아키텍처 (현재 구성 반영)
+## 아키텍처
 
 ### 시스템 아키텍처 다이어그램
 
@@ -101,9 +101,9 @@ flowchart TB
 - 주문 생성/재고 반영을 Kafka 이벤트로 분리하여 결합도 감소
 - 동기 API 체인 길이를 줄여 응답 안정성과 확장성 개선
 
-### 3) 성능 최적화
-- Redis 캐시(특히 Cart) 적용으로 DB 부하 완화
-- Gateway 단에서 Rate Limiting으로 과도한 트래픽 제어
+### 3) 운영 안정성을 고려한 트래픽 처리
+- Cart 서비스는 Redis를 활용해 반복 조회가 많은 데이터를 메모리 기반으로 처리하도록 구성했습니다.
+- API Gateway에는 Rate Limiting을 적용해 특정 구간에 트래픽이 몰릴 때도 전체 서비스에 과부하가 전파되지 않도록 했습니다.
 
 ### 4) 운영 가시성
 - Micrometer + Prometheus + Grafana 기반 메트릭 관측
