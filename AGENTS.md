@@ -102,6 +102,8 @@ Run commands from the target module directory unless noted.
 - Request/Response VOs: `Request*`, `Response*`
 - Event payloads: `*Event`, `*EventType`
 - Topic enum wrappers: `KafkaTopics`
+- Boolean-returning methods: prefer `is*`, `has*`, `can*`, `supports*`
+- Constants: use `UPPER_SNAKE_CASE` (for example `MAX_RETRY_COUNT`)
 
 ## 9) Dependency Injection and Annotations
 
@@ -122,9 +124,14 @@ Run commands from the target module directory unless noted.
 
 - Prefer clear names over comments.
 - Keep one method = one responsibility.
+- Keep Cognitive Complexity at 15 or below per method (SonarQube default threshold).
+- Use practical method-length targets: Controller ~20 lines, Service/Repository ~30 lines.
 - Extract duplicated logic into private helpers when duplication appears twice or more.
 - Keep controller logic thin; business rules belong in services.
 - Prefer immutable inputs/outputs where practical.
+- Use guard clauses and early returns to reduce nesting.
+- Extract complex conditional expressions (`&&` / `||`) into well-named helper methods.
+- Avoid deep nesting; prefer small focused helpers.
 - Avoid hidden side effects; make state transitions explicit.
 - Validate inputs near boundaries, fail fast with clear messages.
 - Keep event contracts stable; avoid ad-hoc payload changes without coordinated consumer updates.
