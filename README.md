@@ -4,23 +4,23 @@
 
 ## 프로젝트 소개
 
-이 프로젝트는 서비스 분리 자체보다, 실무에서 자주 사용하는 구성 요소를 직접 연결하고 적용해보는 데 집중했습니다.
+이 프로젝트는 서비스 분리 자체보다, 실무 도입 관점에서 기술 조합을 검토하고 구현 방식의 장단점을 확인하는 데 집중했습니다.
 
-- 사용자 조회 시 외부 gRPC 호출 실패가 전체 API 실패로 번지지 않게 제어
-- 주문과 재고 처리를 Kafka 메시지 기반으로 분리
-- 설정 파일과 서비스 코드를 분리하고 일부 서비스는 busrefresh 엔드포인트를 노출
+- 사용자 조회 시 외부 gRPC 호출 실패를 Circuit Breaker로 격리하는 방식 검증
+- 주문과 재고 처리를 Kafka 메시지 기반으로 분리하는 방식 검증
+- 설정 파일과 서비스 코드를 분리해 서비스별 설정 관리 방식 확인
 
 ## 핵심 적용 내용
 
 ### 1) API Gateway 단일 진입점
 
-- 클라이언트 요청을 Gateway로 통합했습니다.
-- 클라이언트가 서비스별 주소를 직접 알지 않게 구성했습니다.
+- `lb://USER-SERVICE`, `lb://ORDER-SERVICE`, `lb://CATALOG-SERVICE` 라우트를 구성했습니다.
+- `RewritePath`, `RemoveRequestHeader=Cookie` 필터로 외부 경로와 내부 서비스 경로를 분리했습니다.
+- 사용자, 주문 조회 경로에는 `AuthorizationHeaderFilter`를 적용했습니다.
 
 ### 2) 설정 관리 분리
 
 - Config Server로 공통 설정을 분리했습니다.
-- `config-service`, `apigateway-service`, `user-service`, `file-service`는 busrefresh 엔드포인트를 노출합니다.
 
 ### 3) 주문과 재고 흐름 분리
 
@@ -38,6 +38,27 @@
 - fallback 응답: 빈 주문 목록 반환
 
 실패 시 빈 주문 목록으로 대체 응답해 외부 호출 장애가 사용자 조회 전체 실패로 번지지 않게 했습니다.
+
+## 문제 해결 경험
+
+### 1) 외부 호출 실패 전파
+
+- 문제: 사용자 조회 API가 `order-service` gRPC 호출에 직접 의존해, 외부 호출 실패 시 API 전체 실패 위험이 있었습니다.
+- 조치: 호출 구간을 `cb-userToOrder-grpc` Circuit Breaker로 감싸고 fallback에서 빈 주문 목록을 반환하도록 처리했습니다.
+- 결과: gRPC 오류가 발생해도 사용자 기본 정보 응답은 유지되고, 장애 전파 범위를 주문 정보 조회로 제한했습니다.
+
+### 2) Kafka 메시지 안정성
+
+- 문제: JSON 메시지 파싱 실패, 필수 필드 누락, 지원하지 않는 이벤트 타입이 섞이면 재고 처리 흐름이 불안정해질 수 있었습니다.
+- 조치: 수신 메시지를 `StockEvent`로 파싱할 때 예외를 분리 처리하고, `orderId`, `productId`, `qty`, `eventType` 검증을 추가했습니다.
+- 조치: 재고 차감 실패 시 원인과 함께 `CATALOG_STOCK_UPDATE_RESULT` 토픽으로 실패 결과 메시지를 발행하도록 구성했습니다.
+- 결과: 입력 오류와 비즈니스 실패를 로그와 결과 메시지로 분리해 추적 가능한 형태로 바꿨습니다.
+
+### 3) 보상 처리 흐름
+
+- 문제: 재고 차감 실패 후 주문이 그대로 남으면 주문 상태와 재고 상태가 어긋나는 문제가 생길 수 있었습니다.
+- 조치: `order-service`에서 재고 결과 메시지를 소비해 실패 이벤트를 감지하면 `cancelOrder` 보상 로직을 실행하도록 구성했습니다.
+- 결과: 재고 실패 케이스에서 주문 보상 처리 경로를 명확히 분리해 정합성 문제를 줄였습니다.
 
 ## 시스템 아키텍처
 
@@ -160,11 +181,6 @@ docker-compose -f docker-compose-local.yml up -d zipkin prometheus grafana
 - Prometheus: `http://localhost:9090`
 - Grafana: `http://localhost:3001` 로그인 `admin/admin`
 - RabbitMQ UI: `http://localhost:15672` 로그인 `guest/guest`
-
-## 한계
-
-- Gateway 라우팅은 현재 `user-service`, `order-service`, `catalog-service` 중심입니다.
-- 부하 테스트 수치와 운영 지표 결과는 아직 별도 문서로 정리하지 않았습니다.
 
 ## 참고 문서
 
