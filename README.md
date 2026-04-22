@@ -77,7 +77,6 @@ flowchart TB
       REDIS[(Redis)]
       KAFKA[(Kafka)]
       RABBIT[(RabbitMQ)]
-      FILEVOL[(File Volume)]
     end
 
     subgraph Obs[Observability]
@@ -95,7 +94,6 @@ flowchart TB
     BIZ --> REDIS
     BIZ --> KAFKA
     BIZ --> RABBIT
-    BIZ --> FILEVOL
     GW --> REDIS
 
     GW -. trace .-> ZIPKIN
