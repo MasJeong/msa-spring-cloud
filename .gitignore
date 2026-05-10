@@ -15,6 +15,7 @@
 
 # IDE metadata
 .idea/
+.omx/
 *.iws
 *.iml
 *.ipr
