@@ -18,7 +18,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +52,7 @@ public class UserController {
 
     /**
      * User Service 상태 체크
+     * token.secret 값은 노출하지 않고, Config Server에서 주입되었는지 여부만 반환한다.
      *
      * @return 환경 정보
      */
@@ -55,13 +62,20 @@ public class UserController {
         return String.format("It's working in User Service, " +
                         "port(local.server.port)=%s, " +
                         "port(server.port)=%s, " +
-                        "token secret=%s, " +
+                        "token secret configured=%s, " +
                         "token expiration time=%s",
                 env.getProperty("local.server.port"),
                 env.getProperty("server.port"),
-                env.getProperty("token.secret"),
+                isTokenSecretConfigured(),
                 env.getProperty("token.expiration-time")
         );
+    }
+
+    /**
+     * JWT 서명 키(token.secret)가 설정되어 있는지 확인한다.
+     */
+    private boolean isTokenSecretConfigured() {
+        return StringUtils.hasText(env.getProperty("token.secret"));
     }
 
     /**

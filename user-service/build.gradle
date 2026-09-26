@@ -110,9 +110,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// 테스트 코드를 제외한 빌드 수행
+// 테스트 코드를 제외한 빌드 수행 (기존 Repository/Service 테스트는 로컬 MariaDB 필요)
+// 테스트 실행 시 명시적으로 켠다: sh gradlew test -PwithTests --tests '<테스트 클래스>'
 tasks.withType(Test) {
-    enabled = false
+    enabled = project.hasProperty('withTests')
 }
 
 // Protobuf 설정
